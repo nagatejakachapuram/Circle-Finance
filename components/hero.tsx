@@ -19,14 +19,14 @@ import { useCallback, useRef } from "react"
 import HeroVisualGrid from "./hero-visual"
 import HeroVisualArc from "./hero-visual-arc"
 import HeroVisualMesh from "./hero-visual-mesh"
-import HeroVisualAxis from "./hero-visual-axis"
+import HeroVisualPortfolio from "./hero-visual-portfolio"
 
 export default function Hero() {
   const { connected, connect } = useWallet()
   const reduce = useReducedMotion()
   const ref = useRef<HTMLDivElement | null>(null)
   const search = useSearchParams()
-  const visual = (search?.get("visual") || "axis").toLowerCase() as "axis" | "arc" | "mesh" | "grid"
+  const visual = (search?.get("visual") || "portfolio").toLowerCase() as "portfolio" | "arc" | "mesh" | "grid"
 
   const mx = useMotionValue(0)
   const my = useMotionValue(0)
@@ -151,8 +151,8 @@ export default function Hero() {
                     "linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.7)), linear-gradient(120deg, rgba(58,134,255,0.06), rgba(58,134,255,0))",
                 }}
               />
-              {visual === "axis" ? (
-                <HeroVisualAxis style={visualStyle} />
+              {visual === "portfolio" ? (
+                <HeroVisualPortfolio style={visualStyle} />
               ) : visual === "arc" ? (
                 <HeroVisualArc style={visualStyle} />
               ) : visual === "mesh" ? (
