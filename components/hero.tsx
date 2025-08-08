@@ -16,23 +16,26 @@ import { useWallet } from "./wallet-context"
 import AuroraBg from "./aurora-bg"
 import { GlassCard } from "./glass-card"
 import { useCallback, useRef } from "react"
-import HeroVisualGrid from "./hero-visual"
+import HeroVisualGrid from "./hero-visual" // legacy grid+sweep
 import HeroVisualArc from "./hero-visual-arc"
 import HeroVisualMesh from "./hero-visual-mesh"
-import HeroVisualPortfolio from "./hero-visual-portfolio"
+import HeroVisualAxis from "./hero-visual-axis"
 
 export default function Hero() {
   const { connected, connect } = useWallet()
   const reduce = useReducedMotion()
   const ref = useRef<HTMLDivElement | null>(null)
   const search = useSearchParams()
-  const visual = (search?.get("visual") || "portfolio").toLowerCase() as "portfolio" | "arc" | "mesh" | "grid"
+  // Default to the new axis grid visual
+  const visual = (search?.get("visual") || "axis").toLowerCase() as "axis" | "arc" | "mesh" | "grid"
 
+  // Parallax motion values
   const mx = useMotionValue(0)
   const my = useMotionValue(0)
   const smx = useSpring(mx, { stiffness: 60, damping: 12, mass: 0.4 })
   const smy = useSpring(my, { stiffness: 60, damping: 12, mass: 0.4 })
 
+  // Map to pixel translations and a tiny tilt
   const tx = useTransform(smx, (v) => v * 26)
   const ty = useTransform(smy, (v) => v * 20)
   const rot = useTransform(smx, (v) => v * -4)
@@ -70,7 +73,7 @@ export default function Hero() {
 
   return (
     <section className="relative overflow-hidden">
-      <AuroraBg intensity={1.2} />
+      <AuroraBg intensity={1.1} />
       <div className="container px-4 md:px-6 py-16 md:py-28 relative">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
@@ -140,19 +143,21 @@ export default function Hero() {
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7 }}
-            className="relative h-[34rem] md:h-[40rem]"
+            className="relative h-[28rem] md:h-[34rem]"
             aria-hidden="true"
           >
             <GlassCard className="absolute inset-0 p-0 overflow-hidden bg-white/85">
+              {/* Glossy wash */}
               <div
                 className="absolute inset-0"
                 style={{
                   background:
-                    "linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.7)), linear-gradient(120deg, rgba(58,134,255,0.06), rgba(58,134,255,0))",
+                    "linear-gradient(180deg, rgba(255,255,255,0.94), rgba(255,255,255,0.66)), linear-gradient(120deg, rgba(58,134,255,0.06), rgba(58,134,255,0))",
                 }}
               />
-              {visual === "portfolio" ? (
-                <HeroVisualPortfolio style={visualStyle} />
+              {/* Visual variant (default = axis) */}
+              {visual === "axis" ? (
+                <HeroVisualAxis style={visualStyle} />
               ) : visual === "arc" ? (
                 <HeroVisualArc style={visualStyle} />
               ) : visual === "mesh" ? (
