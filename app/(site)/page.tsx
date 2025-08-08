@@ -2,6 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { ArrowRight, CheckCircle2, Shield, Wallet, Building2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
+import { Suspense } from "react"
 import Hero from "@/components/hero"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
@@ -26,8 +27,9 @@ return (
         }}
       />
       <AuroraBg intensity={1.15} />
-
-      <Hero />
+      <Suspense fallback={null}>
+        <Hero />
+      </Suspense>
 
       <Features />
 
