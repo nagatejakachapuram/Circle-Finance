@@ -11,10 +11,12 @@ import { useWallet } from "@/components/wallet-context"
 import { GlassCard } from "@/components/glass-card"
 import { FadeIn } from "@/components/motion"
 import AuroraBg from "@/components/aurora-bg"
+import { useRouter } from "next/navigation"
 
 type Step = "wallet" | "kyc" | "review"
 
 export default function GetStartedPage() {
+  const router = useRouter()
   const { connected, connect, address } = useWallet()
   const [kycStatus, setKycStatus] = useState<"idle" | "pending" | "approved">("idle")
   const currentStep: Step = useMemo(() => {
@@ -88,6 +90,14 @@ export default function GetStartedPage() {
                   <Button disabled className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white">
                     <Loader2 className="mr-2 size-4 animate-spin" />
                     {"Processing"}
+                  </Button>
+                ) : kycStatus === "idle" && connected ? (
+                  <Button
+                    onClick={() => router.push('/kyc')}
+                    className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95"
+                  >
+                    <Shield className="mr-2 size-4" />
+                    {"Start Full KYC"}
                   </Button>
                 ) : undefined
               }

@@ -12,6 +12,7 @@ import ScrollProgress from "./scroll-progress"
 const nav = [
   { name: "How it Works", href: "/how-it-works" },
   { name: "Explore Estates", href: "/explore" },
+  { name: "KYC Verification", href: "/kyc" },
   { name: "Get Started", href: "/get-started" },
   { name: "Docs", href: "#" },
 ]
