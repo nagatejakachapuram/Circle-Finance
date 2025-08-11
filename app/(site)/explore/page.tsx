@@ -63,7 +63,7 @@ export default function ExplorePage() {
           </div>
           <div className="flex gap-3">
             <Button asChild className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95">
-              <Link href="/get-started">{"Get Started"}</Link>
+              <Link href="/auth/signup">{"Get Started"}</Link>
             </Button>
             <Button asChild variant="outline" className="border-slate-200 text-foreground hover:bg-slate-100">
               <Link href="/how-it-works">{"How it Works"}</Link>
@@ -138,7 +138,7 @@ export default function ExplorePage() {
                       </div>
                       <div className="mt-5 flex items-center gap-3">
                         <Button size="sm" className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95" asChild>
-                          <Link href="/get-started">{"Invest"}</Link>
+                          <Link href="/payments">{"Invest"}</Link>
                         </Button>
                         <Button size="sm" variant="outline" className="border-slate-200 text-foreground hover:bg-slate-100" asChild>
                           <Link href="#">{"Details"}</Link>

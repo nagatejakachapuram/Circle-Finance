@@ -126,7 +126,7 @@ return (
                       </div>
                       <div className="mt-5 flex items-center gap-3">
                         <Button asChild size="sm" className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95">
-                          <Link href="/get-started">{"Invest"}</Link>
+                          <Link href="/payments">{"Invest"}</Link>
                         </Button>
                         <Button asChild size="sm" variant="outline" className="border-slate-200 text-foreground hover:bg-slate-100">
                           <Link href="/explore">{"View Details"}</Link>

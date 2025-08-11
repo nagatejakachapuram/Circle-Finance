@@ -8,12 +8,14 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { useState } from "react"
 import { useWallet } from "./wallet-context"
 import ScrollProgress from "./scroll-progress"
+import { useAuth } from "./auth-provider"
 
 const nav = [
   { name: "How it Works", href: "/how-it-works" },
   { name: "Explore Estates", href: "/explore" },
   { name: "KYC Verification", href: "/kyc" },
   { name: "Get Started", href: "/get-started" },
+  { name: "Payments", href: "/payments" },
   { name: "Docs", href: "#" },
 ]
 
@@ -21,6 +23,7 @@ export default function Header() {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const { connected, connect, disconnect, address } = useWallet()
+  const { user, signOut } = useAuth()
 
   return (
     <>
@@ -49,22 +52,28 @@ export default function Header() {
           </nav>
 
           <div className="hidden md:flex items-center gap-2">
-            {connected ? (
+            {user ? (
               <>
                 <Button variant="outline" className="border-slate-200 text-foreground hover:bg-slate-100">
-                  {address ? `${address.slice(0, 6)}…${address.slice(-4)}` : "Connected"}
+                  {user.email}
                 </Button>
-                <Button onClick={disconnect} variant="ghost" className="text-muted-foreground hover:text-foreground hover:bg-slate-100">
-                  {"Disconnect"}
+                <Button onClick={signOut} variant="ghost" className="text-muted-foreground hover:text-foreground hover:bg-slate-100">
+                  {"Sign Out"}
                 </Button>
               </>
-            ) : (
+            ) : connected ? (
               <Button
                 onClick={connect}
                 className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white shadow-[0_10px_30px_-10px_rgba(58,134,255,0.45)] hover:opacity-95"
               >
                 <Wallet className="mr-2 size-4" />
                 {"Connect Wallet"}
+              </Button>
+            ) : (
+              <Button asChild className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95">
+                <Link href="/auth/login">
+                  {"Sign In"}
+                </Link>
               </Button>
             )}
           </div>
@@ -93,20 +102,31 @@ export default function Header() {
                     </Link>
                   ))}
                   <div className="pt-2">
-                    {connected ? (
-                      <Button onClick={() => setOpen(false)} variant="outline" className="w-full border-slate-200 hover:bg-slate-100">
-                        {address ? `${address.slice(0, 6)}…${address.slice(-4)}` : "Connected"}
-                      </Button>
+                    {user ? (
+                      <div className="space-y-2">
+                        <Button onClick={() => setOpen(false)} variant="outline" className="w-full border-slate-200 hover:bg-slate-100">
+                          {user.email}
+                        </Button>
+                        <Button 
+                          onClick={() => {
+                            setOpen(false)
+                            signOut()
+                          }}
+                          variant="ghost" 
+                          className="w-full text-muted-foreground hover:text-foreground hover:bg-slate-100"
+                        >
+                          Sign Out
+                        </Button>
+                      </div>
                     ) : (
                       <Button
                         onClick={() => {
                           setOpen(false)
-                          setTimeout(connect, 120)
+                          setTimeout(() => window.location.href = '/auth/login', 120)
                         }}
                         className="w-full bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white"
                       >
-                        <Wallet className="mr-2 size-4" />
-                        {"Connect Wallet"}
+                        {"Sign In"}
                       </Button>
                     )}
                   </div>

@@ -12,14 +12,17 @@ import { GlassCard } from "@/components/glass-card"
 import { FadeIn } from "@/components/motion"
 import AuroraBg from "@/components/aurora-bg"
 import { useRouter } from "next/navigation"
+import { useAuth } from "@/components/auth-provider"
 
 type Step = "wallet" | "kyc" | "review"
 
 export default function GetStartedPage() {
   const router = useRouter()
   const { connected, connect, address } = useWallet()
+  const { user } = useAuth()
   const [kycStatus, setKycStatus] = useState<"idle" | "pending" | "approved">("idle")
   const currentStep: Step = useMemo(() => {
+    if (!user) return "wallet"
     if (!connected) return "wallet"
     if (kycStatus !== "approved") return "kyc"
     return "review"
@@ -45,12 +48,24 @@ export default function GetStartedPage() {
           <FadeIn>
             <OnboardingStep
               index={1}
-              title="Connect Wallet"
+              title={user ? "Connect Wallet" : "Create Account"}
               active={currentStep === "wallet"}
-              complete={connected}
-              description={connected ? `Connected: ${address?.slice(0, 6)}…${address?.slice(-4)}` : "Authenticate with your wallet."}
+              complete={user && connected}
+              description={
+                user 
+                  ? connected 
+                    ? `Connected: ${address?.slice(0, 6)}…${address?.slice(-4)}` 
+                    : "Connect your wallet to continue."
+                  : "Create your Circle Pay account first."
+              }
               action={
-                !connected ? (
+                !user ? (
+                  <Button asChild className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95">
+                    <Link href="/auth/signup">
+                      {"Create Account"}
+                    </Link>
+                  </Button>
+                ) : !connected ? (
                   <Button onClick={connect} className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95">
                     <Wallet className="mr-2 size-4" />
                     {"Connect Wallet"}
@@ -74,7 +89,7 @@ export default function GetStartedPage() {
                   : "Upload your info and verify identity."
               }
               action={
-                connected && kycStatus === "idle" ? (
+                user && connected && kycStatus === "idle" ? (
                   <Button
                     onClick={async () => {
                       setKycStatus("pending")
@@ -91,7 +106,7 @@ export default function GetStartedPage() {
                     <Loader2 className="mr-2 size-4 animate-spin" />
                     {"Processing"}
                   </Button>
-                ) : kycStatus === "idle" && connected ? (
+                ) : kycStatus === "idle" && user && connected ? (
                   <Button
                     onClick={() => router.push('/kyc')}
                     className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95"
