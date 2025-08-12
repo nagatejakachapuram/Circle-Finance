@@ -1,17 +1,12 @@
 "use client"
 
+import type React from "react"
+
 import Link from "next/link"
-import {
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-  useReducedMotion,
-  useScroll,
-} from "framer-motion"
+import { motion, useMotionValue, useSpring, useTransform, useReducedMotion, useScroll } from "framer-motion"
 import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Wallet, ArrowRight } from 'lucide-react'
+import { Wallet, ArrowRight } from "lucide-react"
 import { useWallet } from "./wallet-context"
 import AuroraBg from "./aurora-bg"
 import { GlassCard } from "./glass-card"
@@ -48,7 +43,7 @@ export default function Hero() {
       mx.set((x - 0.5) * 2)
       my.set((y - 0.5) * 2)
     },
-    [mx, my, reduce]
+    [mx, my, reduce],
   )
 
   const handleLeave = useCallback(() => {
@@ -100,7 +95,9 @@ export default function Hero() {
               transition={{ delay: 0.12, duration: 0.6 }}
               className="mt-5 text-muted-foreground text-lg max-w-xl"
             >
-              {"Circle Pay brings real-world property to the blockchain with compliance-first rails. Invest transparently and earn rent in USDC."}
+              {
+                "Circle Pay brings real-world property to the blockchain with compliance-first rails. Invest transparently and earn rent in USDC."
+              }
             </motion.p>
 
             <motion.div
@@ -109,14 +106,21 @@ export default function Hero() {
               transition={{ delay: 0.18, duration: 0.6 }}
               className="mt-8 flex flex-wrap gap-3"
             >
-              <Button asChild className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white shadow-[0_10px_30px_-10px_rgba(58,134,255,0.45)] hover:opacity-95">
+              <Button
+                asChild
+                className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white shadow-[0_10px_30px_-10px_rgba(58,134,255,0.45)] hover:opacity-95"
+              >
                 <Link href="/explore">
                   {"Explore Estates"}
                   <ArrowRight className="ml-2 size-4" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="border-slate-200 text-foreground hover:bg-slate-100">
-                <Link href="/get-started">{"Start KYC"}</Link>
+              <Button
+                asChild
+                variant="outline"
+                className="border-slate-200 text-foreground hover:bg-slate-100 bg-transparent"
+              >
+                <Link href="/app">{"Start KYC"}</Link>
               </Button>
               <Button
                 onClick={connect}

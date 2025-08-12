@@ -19,10 +19,17 @@ export default function FinalCta() {
                 </p>
               </div>
               <div className="flex flex-wrap gap-3">
-                <Button asChild className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white shadow-[0_10px_30px_-10px_rgba(58,134,255,0.45)] hover:opacity-95">
-                  <Link href="/get-started">{"Start KYC"}</Link>
+                <Button
+                  asChild
+                  className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white shadow-[0_10px_30px_-10px_rgba(58,134,255,0.45)] hover:opacity-95"
+                >
+                  <Link href="/app">{"Start KYC"}</Link>
                 </Button>
-                <Button asChild variant="outline" className="border-slate-200 text-foreground hover:bg-slate-100">
+                <Button
+                  asChild
+                  variant="outline"
+                  className="border-slate-200 text-foreground hover:bg-slate-100 bg-transparent"
+                >
                   <Link href="/explore">{"Explore Estates"}</Link>
                 </Button>
               </div>

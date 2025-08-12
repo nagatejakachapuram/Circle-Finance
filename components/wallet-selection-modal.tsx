@@ -3,7 +3,8 @@
 import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { X, ExternalLink } from "lucide-react"
+import { ExternalLink } from "lucide-react"
+import { useIsMobile } from "@/components/ui/use-mobile"
 
 interface WalletOption {
   id: string
@@ -63,6 +64,7 @@ interface WalletSelectionModalProps {
 
 export function WalletSelectionModal({ open, onOpenChange, onWalletSelect, isConnecting }: WalletSelectionModalProps) {
   const [selectedWallet, setSelectedWallet] = useState<string | null>(null)
+  const isMobile = useIsMobile()
 
   const handleWalletClick = async (walletId: string) => {
     setSelectedWallet(walletId)
@@ -75,17 +77,9 @@ export function WalletSelectionModal({ open, onOpenChange, onWalletSelect, isCon
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-slate-900 border-slate-800 text-white">
-        <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+      <DialogContent className="sm:max-w-md w-[95vw] max-w-[420px] bg-slate-900 border-slate-800 text-white">
+        <DialogHeader className="pb-4">
           <DialogTitle className="text-xl font-semibold">Connect a Wallet</DialogTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onOpenChange(false)}
-            className="text-slate-400 hover:text-white hover:bg-slate-800"
-          >
-            <X className="h-4 w-4" />
-          </Button>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -97,7 +91,7 @@ export function WalletSelectionModal({ open, onOpenChange, onWalletSelect, isCon
                   <Button
                     key={wallet.id}
                     variant="ghost"
-                    className="w-full justify-start h-12 text-left hover:bg-slate-800 disabled:opacity-50"
+                    className={`w-full justify-start ${isMobile ? "h-14" : "h-12"} text-left hover:bg-slate-800 disabled:opacity-50 transition-all`}
                     onClick={() => handleWalletClick(wallet.id)}
                     disabled={isConnecting}
                   >
@@ -121,7 +115,7 @@ export function WalletSelectionModal({ open, onOpenChange, onWalletSelect, isCon
                 <Button
                   key={wallet.id}
                   variant="ghost"
-                  className="w-full justify-start h-12 text-left hover:bg-slate-800 disabled:opacity-50"
+                  className={`w-full justify-start ${isMobile ? "h-14" : "h-12"} text-left hover:bg-slate-800 disabled:opacity-50 transition-all`}
                   onClick={() => handleWalletClick(wallet.id)}
                   disabled={isConnecting}
                 >
@@ -146,7 +140,7 @@ export function WalletSelectionModal({ open, onOpenChange, onWalletSelect, isCon
             <span className="text-slate-400">New to Ethereum wallets?</span>
             <Button
               variant="link"
-              className="text-purple-400 hover:text-purple-300 p-0 h-auto"
+              className={`text-purple-400 hover:text-purple-300 p-0 ${isMobile ? "h-auto min-h-[44px]" : "h-auto"}`}
               onClick={() => window.open("https://ethereum.org/wallets/", "_blank")}
             >
               Learn More

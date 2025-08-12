@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Progress } from "@/components/ui/progress"
 import { useWallet } from "@/components/wallet-context"
-import { WalletSelectionModal } from "@/components/wallet-selection-modal"
 import { GlassCard } from "@/components/glass-card"
 import { FadeIn } from "@/components/motion"
+import { useIsMobile } from "@/components/ui/use-mobile"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import Link from "next/link"
@@ -39,6 +39,7 @@ const countries = [
 
 export default function AppPage() {
   const { connected, connect, connectWallet, address, isConnecting, showWalletModal, setShowWalletModal } = useWallet()
+  const isMobile = useIsMobile()
   const [currentStep, setCurrentStep] = useState<KYCStep>("wallet")
   const [selectedCountry, setSelectedCountry] = useState<string>("")
   const [onchainIdDeployed, setOnchainIdDeployed] = useState(false)
@@ -90,7 +91,7 @@ export default function AppPage() {
   return (
     <div className="min-h-dvh relative overflow-hidden bg-white">
       <Header />
-      <main className="relative py-16 md:py-24">
+      <main className="relative py-8 md:py-16 lg:py-24">
         <div
           aria-hidden="true"
           className="pointer-events-none fixed inset-0 -z-10"
@@ -102,15 +103,15 @@ export default function AppPage() {
 
         <div className="container px-4 md:px-6 max-w-4xl">
           <FadeIn>
-            <div className="text-center mb-12">
-              <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground mb-4">
+            <div className="text-center mb-8 md:mb-12">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-semibold tracking-tight text-foreground mb-4">
                 KYC Verification
               </h1>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto">
                 Complete your onchain identity verification to access tokenized real estate investments
               </p>
 
-              <div className="mt-8 max-w-md mx-auto">
+              <div className="mt-6 md:mt-8 max-w-md mx-auto">
                 <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
                   <span>Progress</span>
                   <span>{Math.round(getProgress())}%</span>
@@ -120,12 +121,12 @@ export default function AppPage() {
             </div>
           </FadeIn>
 
-          <div className="space-y-6">
+          <div className="space-y-4 md:space-y-6">
             <FadeIn delay={0.1}>
-              <GlassCard className="p-6">
-                <div className="flex items-start gap-4">
+              <GlassCard className="p-4 md:p-6">
+                <div className="flex items-start gap-3 md:gap-4">
                   <div
-                    className={`p-3 rounded-full ${
+                    className={`p-2 md:p-3 rounded-full ${
                       getStepStatus("wallet") === "complete"
                         ? "bg-green-100 text-green-600"
                         : getStepStatus("wallet") === "in-progress"
@@ -134,14 +135,14 @@ export default function AppPage() {
                     }`}
                   >
                     {getStepStatus("wallet") === "complete" ? (
-                      <CheckCircle2 className="size-6" />
+                      <CheckCircle2 className="size-5 md:size-6" />
                     ) : (
-                      <Wallet className="size-6" />
+                      <Wallet className="size-5 md:size-6" />
                     )}
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <h3 className="text-lg font-medium text-foreground">Connect Wallet</h3>
+                      <h3 className="text-base md:text-lg font-medium text-foreground">Connect Wallet</h3>
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium ${
                           getStepStatus("wallet") === "complete"
@@ -158,14 +159,14 @@ export default function AppPage() {
                             : "Pending"}
                       </span>
                     </div>
-                    <p className="text-muted-foreground mb-4">
+                    <p className="text-muted-foreground mb-4 text-sm md:text-base">
                       {connected ? "Wallet connected successfully" : "Please connect your wallet to continue"}
                     </p>
                     {!connected && (
                       <Button
                         onClick={connect}
                         disabled={isConnecting}
-                        className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white disabled:opacity-50"
+                        className={`bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white disabled:opacity-50 ${isMobile ? "h-12 px-6" : ""}`}
                       >
                         <Wallet className="mr-2 size-4" />
                         Connect Wallet
@@ -182,10 +183,10 @@ export default function AppPage() {
             </FadeIn>
 
             <FadeIn delay={0.2}>
-              <GlassCard className="p-6">
-                <div className="flex items-start gap-4">
+              <GlassCard className="p-4 md:p-6">
+                <div className="flex items-start gap-3 md:gap-4">
                   <div
-                    className={`p-3 rounded-full ${
+                    className={`p-2 md:p-3 rounded-full ${
                       getStepStatus("onchain-id") === "complete"
                         ? "bg-green-100 text-green-600"
                         : getStepStatus("onchain-id") === "in-progress"
@@ -194,14 +195,14 @@ export default function AppPage() {
                     }`}
                   >
                     {getStepStatus("onchain-id") === "complete" ? (
-                      <CheckCircle2 className="size-6" />
+                      <CheckCircle2 className="size-5 md:size-6" />
                     ) : (
-                      <User className="size-6" />
+                      <User className="size-5 md:size-6" />
                     )}
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <h3 className="text-lg font-medium text-foreground">Create OnchainID</h3>
+                      <h3 className="text-base md:text-lg font-medium text-foreground">Create OnchainID</h3>
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium ${
                           getStepStatus("onchain-id") === "complete"
@@ -218,13 +219,13 @@ export default function AppPage() {
                             : "Pending"}
                       </span>
                     </div>
-                    <p className="text-muted-foreground mb-4">
+                    <p className="text-muted-foreground mb-4 text-sm md:text-base">
                       Deploy your onchain identity contract to store verified claims
                     </p>
                     {getStepStatus("onchain-id") === "in-progress" && !onchainIdDeployed && (
                       <Button
                         onClick={handleDeployIdentity}
-                        className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white"
+                        className={`bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white ${isMobile ? "h-12 px-6" : ""}`}
                       >
                         Deploy Identity
                         <ChevronRight className="ml-2 size-4" />
@@ -236,10 +237,10 @@ export default function AppPage() {
             </FadeIn>
 
             <FadeIn delay={0.3}>
-              <GlassCard className="p-6">
-                <div className="flex items-start gap-4">
+              <GlassCard className="p-4 md:p-6">
+                <div className="flex items-start gap-3 md:gap-4">
                   <div
-                    className={`p-3 rounded-full ${
+                    className={`p-2 md:p-3 rounded-full ${
                       getStepStatus("kyc-verification") === "complete"
                         ? "bg-green-100 text-green-600"
                         : getStepStatus("kyc-verification") === "in-progress"
@@ -248,14 +249,14 @@ export default function AppPage() {
                     }`}
                   >
                     {getStepStatus("kyc-verification") === "complete" ? (
-                      <CheckCircle2 className="size-6" />
+                      <CheckCircle2 className="size-5 md:size-6" />
                     ) : (
-                      <Shield className="size-6" />
+                      <Shield className="size-5 md:size-6" />
                     )}
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <h3 className="text-lg font-medium text-foreground">KYC Verification</h3>
+                      <h3 className="text-base md:text-lg font-medium text-foreground">KYC Verification</h3>
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium ${
                           getStepStatus("kyc-verification") === "complete"
@@ -272,7 +273,7 @@ export default function AppPage() {
                             : "Pending"}
                       </span>
                     </div>
-                    <p className="text-muted-foreground mb-4">
+                    <p className="text-muted-foreground mb-4 text-sm md:text-base">
                       Complete KYC verification and get your cryptographic signature
                     </p>
                     {getStepStatus("kyc-verification") === "in-progress" && (
@@ -295,7 +296,7 @@ export default function AppPage() {
                         <Button
                           onClick={handleGetKYCSignature}
                           disabled={!selectedCountry}
-                          className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white disabled:opacity-50"
+                          className={`bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white disabled:opacity-50 ${isMobile ? "h-12 px-6" : ""}`}
                         >
                           Get KYC Signature
                           <ChevronRight className="ml-2 size-4" />
@@ -314,10 +315,10 @@ export default function AppPage() {
             </FadeIn>
 
             <FadeIn delay={0.4}>
-              <GlassCard className="p-6">
-                <div className="flex items-start gap-4">
+              <GlassCard className="p-4 md:p-6">
+                <div className="flex items-start gap-3 md:gap-4">
                   <div
-                    className={`p-3 rounded-full ${
+                    className={`p-2 md:p-3 rounded-full ${
                       getStepStatus("add-claim") === "complete"
                         ? "bg-green-100 text-green-600"
                         : getStepStatus("add-claim") === "in-progress"
@@ -326,14 +327,14 @@ export default function AppPage() {
                     }`}
                   >
                     {getStepStatus("add-claim") === "complete" ? (
-                      <CheckCircle2 className="size-6" />
+                      <CheckCircle2 className="size-5 md:size-6" />
                     ) : (
-                      <Plus className="size-6" />
+                      <Plus className="size-5 md:size-6" />
                     )}
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <h3 className="text-lg font-medium text-foreground">Add Claim to Identity</h3>
+                      <h3 className="text-base md:text-lg font-medium text-foreground">Add Claim to Identity</h3>
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium ${
                           getStepStatus("add-claim") === "complete"
@@ -350,13 +351,13 @@ export default function AppPage() {
                             : "Pending"}
                       </span>
                     </div>
-                    <p className="text-muted-foreground mb-4">
+                    <p className="text-muted-foreground mb-4 text-sm md:text-base">
                       Add your KYC verification claim to your onchain identity
                     </p>
                     {getStepStatus("add-claim") === "in-progress" && !claimAdded && (
                       <Button
                         onClick={handleAddClaim}
-                        className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white"
+                        className={`bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white ${isMobile ? "h-12 px-6" : ""}`}
                       >
                         Add KYC Claim
                         <ChevronRight className="ml-2 size-4" />
@@ -398,13 +399,6 @@ export default function AppPage() {
         </div>
       </main>
       <Footer />
-
-      <WalletSelectionModal
-        open={showWalletModal}
-        onOpenChange={setShowWalletModal}
-        onWalletSelect={connectWallet}
-        isConnecting={isConnecting}
-      />
     </div>
   )
 }
