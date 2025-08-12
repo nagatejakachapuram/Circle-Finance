@@ -217,9 +217,6 @@ export default function TreasuriesPage() {
 
           <div className="flex flex-col sm:flex-row sm:items-end gap-4 justify-between">
             <div>
-              <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-foreground">
-                Tokenized Government Bonds
-              </h2>
               <p className="text-muted-foreground mt-2">
                 US Treasury securities backed by the full faith and credit of the government
               </p>
