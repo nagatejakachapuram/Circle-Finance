@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Progress } from "@/components/ui/progress"
 import { useWallet } from "@/components/wallet-context"
+import { WalletSelectionModal } from "@/components/wallet-selection-modal"
 import { GlassCard } from "@/components/glass-card"
 import { FadeIn } from "@/components/motion"
 import Header from "@/components/header"
@@ -37,46 +38,12 @@ const countries = [
 ]
 
 export default function AppPage() {
-  const { connected, connect, address, isConnecting } = useWallet()
+  const { connected, connect, connectWallet, address, isConnecting, showWalletModal, setShowWalletModal } = useWallet()
   const [currentStep, setCurrentStep] = useState<KYCStep>("wallet")
   const [selectedCountry, setSelectedCountry] = useState<string>("")
   const [onchainIdDeployed, setOnchainIdDeployed] = useState(false)
   const [kycSignature, setKycSignature] = useState<string>("")
   const [claimAdded, setClaimAdded] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && address) {
-      const savedKYC = localStorage.getItem(`kyc_data_${address}`)
-      if (savedKYC) {
-        try {
-          const kycData: KYCData = JSON.parse(savedKYC)
-          setCurrentStep(kycData.currentStep)
-          setSelectedCountry(kycData.selectedCountry)
-          setOnchainIdDeployed(kycData.onchainIdDeployed)
-          setKycSignature(kycData.kycSignature)
-          setClaimAdded(kycData.claimAdded)
-        } catch (error) {
-          console.error("Error loading KYC data:", error)
-        }
-      }
-    }
-    setIsLoading(false)
-  }, [address])
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && address && !isLoading) {
-      const kycData: KYCData = {
-        currentStep,
-        selectedCountry,
-        onchainIdDeployed,
-        kycSignature,
-        claimAdded,
-        walletAddress: address,
-      }
-      localStorage.setItem(`kyc_data_${address}`, JSON.stringify(kycData))
-    }
-  }, [currentStep, selectedCountry, onchainIdDeployed, kycSignature, claimAdded, address, isLoading])
 
   useEffect(() => {
     if (connected && currentStep === "wallet") {
@@ -118,23 +85,6 @@ export default function AppPage() {
     await new Promise((resolve) => setTimeout(resolve, 2000))
     setClaimAdded(true)
     setCurrentStep("complete")
-  }
-
-  if (isLoading) {
-    return (
-      <div className="min-h-dvh relative overflow-hidden bg-white">
-        <Header />
-        <main className="relative py-16 md:py-24">
-          <div className="container px-4 md:px-6 max-w-4xl">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-4 text-muted-foreground">Loading your verification status...</p>
-            </div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    )
   }
 
   return (
@@ -218,7 +168,7 @@ export default function AppPage() {
                         className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white disabled:opacity-50"
                       >
                         <Wallet className="mr-2 size-4" />
-                        {isConnecting ? "Connecting..." : "Connect Wallet"}
+                        Connect Wallet
                       </Button>
                     )}
                     {connected && (
@@ -448,6 +398,13 @@ export default function AppPage() {
         </div>
       </main>
       <Footer />
+
+      <WalletSelectionModal
+        open={showWalletModal}
+        onOpenChange={setShowWalletModal}
+        onWalletSelect={connectWallet}
+        isConnecting={isConnecting}
+      />
     </div>
   )
 }

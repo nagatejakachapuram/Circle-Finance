@@ -1,15 +1,17 @@
 "use client"
 
 import type React from "react"
-
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
 
 type WalletCtx = {
   connected: boolean
   address: string | null
   connect: () => Promise<void>
+  connectWallet: (walletId: string) => Promise<void>
   disconnect: () => void
   isConnecting: boolean
+  showWalletModal: boolean
+  setShowWalletModal: (show: boolean) => void
 }
 
 const Ctx = createContext<WalletCtx | undefined>(undefined)
@@ -23,6 +25,7 @@ declare global {
 export function WalletProvider({ children }: { children?: React.ReactNode }) {
   const [address, setAddress] = useState<string | null>(null)
   const [isConnecting, setIsConnecting] = useState(false)
+  const [showWalletModal, setShowWalletModal] = useState(false)
 
   useEffect(() => {
     // Check if wallet was previously connected
@@ -59,20 +62,27 @@ export function WalletProvider({ children }: { children?: React.ReactNode }) {
     }
   }, [])
 
-  const connect = useCallback(async () => {
-    if (typeof window === "undefined" || !window.ethereum) {
-      alert("Please install MetaMask or another Web3 wallet")
-      return
-    }
-
+  const connectWallet = useCallback(async (walletId: string) => {
     setIsConnecting(true)
-    try {
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      })
 
-      if (accounts.length > 0) {
-        setAddress(accounts[0])
+    try {
+      if (walletId === "metamask") {
+        if (typeof window === "undefined" || !window.ethereum) {
+          window.open("https://metamask.io/download/", "_blank")
+          return
+        }
+
+        const accounts = await window.ethereum.request({
+          method: "eth_requestAccounts",
+        })
+
+        if (accounts.length > 0) {
+          setAddress(accounts[0])
+          setShowWalletModal(false)
+        }
+      } else {
+        // For other wallets, show installation message
+        alert(`${walletId} integration coming soon! Please use MetaMask for now.`)
       }
     } catch (error: any) {
       console.error("Error connecting wallet:", error)
@@ -87,6 +97,10 @@ export function WalletProvider({ children }: { children?: React.ReactNode }) {
     }
   }, [])
 
+  const connect = useCallback(async () => {
+    setShowWalletModal(true)
+  }, [])
+
   const disconnect = useCallback(() => {
     setAddress(null)
   }, [])
@@ -96,10 +110,13 @@ export function WalletProvider({ children }: { children?: React.ReactNode }) {
       connected: !!address,
       address,
       connect,
+      connectWallet,
       disconnect,
       isConnecting,
+      showWalletModal,
+      setShowWalletModal,
     }),
-    [address, connect, disconnect, isConnecting],
+    [address, connect, connectWallet, disconnect, isConnecting, showWalletModal],
   )
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
@@ -113,8 +130,11 @@ export function useWallet(): WalletCtx {
       connected: false,
       address: null,
       connect: async () => {},
+      connectWallet: async () => {},
       disconnect: () => {},
       isConnecting: false,
+      showWalletModal: false,
+      setShowWalletModal: () => {},
     }
   }
   return ctx
