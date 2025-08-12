@@ -10,6 +10,8 @@ import { GlassCard } from "@/components/glass-card"
 import { FadeIn } from "@/components/motion"
 import { useIsMobile } from "@/components/ui/use-mobile"
 import Link from "next/link"
+import { identityProxy } from "../../../context/identityProxy";
+import { useAccount } from "wagmi";
 
 type KYCStep = "wallet" | "onchain-id" | "kyc-verification" | "add-claim" | "complete"
 
@@ -43,6 +45,8 @@ export default function AppPage() {
   const [onchainIdDeployed, setOnchainIdDeployed] = useState(false)
   const [kycSignature, setKycSignature] = useState<string>("")
   const [claimAdded, setClaimAdded] = useState(false)
+
+const { address: userAddress, isConnected } = useAccount()
 
   useEffect(() => {
     if (connected && currentStep === "wallet") {
