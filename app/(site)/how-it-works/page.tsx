@@ -71,7 +71,7 @@ export default function HowItWorksPage() {
 
         <div className="mt-12 flex flex-wrap gap-3">
           <Button asChild className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95">
-            <Link href="/auth/signup">{"Get Started"}</Link>
+            <Link href="/get-started">{"Start KYC"}</Link>
           </Button>
           <Button asChild variant="outline" className="border-slate-200 text-foreground hover:bg-slate-100">
             <Link href="/explore">{"Explore Estates"}</Link>

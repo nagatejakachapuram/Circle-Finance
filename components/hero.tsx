@@ -116,7 +116,7 @@ export default function Hero() {
                 </Link>
               </Button>
               <Button asChild variant="outline" className="border-slate-200 text-foreground hover:bg-slate-100">
-                <Link href="/auth/signup">{"Get Started"}</Link>
+                <Link href="/get-started">{"Start KYC"}</Link>
               </Button>
               <Button
                 onClick={connect}

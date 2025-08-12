@@ -4,7 +4,6 @@ import { Wallet } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { GlassCard } from "./glass-card"
 import { useWallet } from "./wallet-context"
-import { useAuth } from "./auth-provider"
 
 export function WalletGuard({
   children,
@@ -16,25 +15,7 @@ export function WalletGuard({
   gatedText?: string
 }) {
   const { connected, connect } = useWallet()
-  const { user } = useAuth()
-  
-  if (user && connected) return <div className={className}>{children}</div>
-  
-  if (!user) {
-    return (
-      <div className={className}>
-        <GlassCard>
-          <div className="flex items-center justify-between gap-4">
-            <p className="text-muted-foreground">You must sign in to access this content.</p>
-            <Button asChild className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95">
-              <a href="/auth/login">Sign In</a>
-            </Button>
-          </div>
-        </GlassCard>
-      </div>
-    )
-  }
-  
+  if (connected) return <div className={className}>{children}</div>
   return (
     <div className={className}>
       <GlassCard>

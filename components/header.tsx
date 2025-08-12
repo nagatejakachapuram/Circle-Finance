@@ -2,28 +2,23 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Wallet, Menu, X } from 'lucide-react'
+import { Wallet, Menu, X, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { useState } from "react"
 import { useWallet } from "./wallet-context"
 import ScrollProgress from "./scroll-progress"
-import { useAuth } from "./auth-provider"
 
 const nav = [
   { name: "How it Works", href: "/how-it-works" },
-  { name: "Explore Estates", href: "/explore" },
-  { name: "KYC Verification", href: "/kyc" },
-  { name: "Get Started", href: "/get-started" },
-  { name: "Payments", href: "/payments" },
-  { name: "Docs", href: "#" },
+  { name: "Launch App", href: "/app" },
+  { name: "Docs", href: "https://github.com/nagatejakachapuram/Circle-Pay", external: true },
 ]
 
 export default function Header() {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const { connected, connect, disconnect, address } = useWallet()
-  const { user, signOut } = useAuth()
 
   return (
     <>
@@ -40,40 +35,43 @@ export default function Header() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
+                {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                className={`px-3 py-1.5 rounded-full text-sm transition-colors inline-flex items-center gap-1 ${
                   pathname === item.href
                     ? "text-foreground bg-slate-100"
                     : "text-muted-foreground hover:text-foreground hover:bg-slate-100"
                 }`}
               >
                 {item.name}
+                {item.external && <ExternalLink className="size-3" />}
               </Link>
             ))}
           </nav>
 
           <div className="hidden md:flex items-center gap-2">
-            {user ? (
+            {connected ? (
               <>
-                <Button variant="outline" className="border-slate-200 text-foreground hover:bg-slate-100">
-                  {user.email}
+                <Button
+                  variant="outline"
+                  className="border-slate-200 text-foreground hover:bg-slate-100 bg-transparent"
+                >
+                  {address ? `${address.slice(0, 6)}…${address.slice(-4)}` : "Connected"}
                 </Button>
-                <Button onClick={signOut} variant="ghost" className="text-muted-foreground hover:text-foreground hover:bg-slate-100">
-                  {"Sign Out"}
+                <Button
+                  onClick={disconnect}
+                  variant="ghost"
+                  className="text-muted-foreground hover:text-foreground hover:bg-slate-100"
+                >
+                  {"Disconnect"}
                 </Button>
               </>
-            ) : connected ? (
+            ) : (
               <Button
                 onClick={connect}
                 className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white shadow-[0_10px_30px_-10px_rgba(58,134,255,0.45)] hover:opacity-95"
               >
                 <Wallet className="mr-2 size-4" />
                 {"Connect Wallet"}
-              </Button>
-            ) : (
-              <Button asChild className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95">
-                <Link href="/auth/login">
-                  {"Sign In"}
-                </Link>
               </Button>
             )}
           </div>
@@ -95,43 +93,42 @@ export default function Header() {
                     <Link
                       key={item.name}
                       href={item.href}
+                      {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                       onClick={() => setOpen(false)}
-                      className="px-3 py-2 rounded-md text-sm hover:bg-slate-100 text-muted-foreground hover:text-foreground"
+                      className="px-3 py-2 rounded-md text-sm hover:bg-slate-100 text-muted-foreground hover:text-foreground inline-flex items-center gap-2"
                     >
                       {item.name}
+                      {item.external && <ExternalLink className="size-3" />}
                     </Link>
                   ))}
                   <div className="pt-2">
-                    {user ? (
-                      <div className="space-y-2">
-                        <Button onClick={() => setOpen(false)} variant="outline" className="w-full border-slate-200 hover:bg-slate-100">
-                          {user.email}
-                        </Button>
-                        <Button 
-                          onClick={() => {
-                            setOpen(false)
-                            signOut()
-                          }}
-                          variant="ghost" 
-                          className="w-full text-muted-foreground hover:text-foreground hover:bg-slate-100"
-                        >
-                          Sign Out
-                        </Button>
-                      </div>
+                    {connected ? (
+                      <Button
+                        onClick={() => setOpen(false)}
+                        variant="outline"
+                        className="w-full border-slate-200 hover:bg-slate-100"
+                      >
+                        {address ? `${address.slice(0, 6)}…${address.slice(-4)}` : "Connected"}
+                      </Button>
                     ) : (
                       <Button
                         onClick={() => {
                           setOpen(false)
-                          setTimeout(() => window.location.href = '/auth/login', 120)
+                          setTimeout(connect, 120)
                         }}
                         className="w-full bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white"
                       >
-                        {"Sign In"}
+                        <Wallet className="mr-2 size-4" />
+                        {"Connect Wallet"}
                       </Button>
                     )}
                   </div>
                 </div>
-                <Button onClick={() => setOpen(false)} variant="ghost" className="absolute top-2 right-2 hover:bg-slate-100">
+                <Button
+                  onClick={() => setOpen(false)}
+                  variant="ghost"
+                  className="absolute top-2 right-2 hover:bg-slate-100"
+                >
                   <X className="size-5" />
                   <span className="sr-only">{"Close menu"}</span>
                 </Button>
