@@ -11,7 +11,6 @@ import { Label } from "@/components/ui/label"
 import { WalletGuard } from "@/components/wallet-guard"
 import { GlassCard } from "@/components/glass-card"
 import { FadeIn } from "@/components/motion"
-import AuroraBg from "@/components/aurora-bg"
 
 type Treasury = {
   name: string
@@ -190,12 +189,8 @@ export default function TreasuriesPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-white relative overflow-hidden flex">
-      <div className="border-b border-slate-200 bg-white/80 backdrop-blur-sm sticky top-0 z-50 w-64">
-        {/* Sidebar content can be added here */}
-      </div>
-
-      <div className="flex-1 space-y-6 p-6">
+    <div className="min-h-dvh bg-white relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6 py-6 space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
@@ -203,7 +198,7 @@ export default function TreasuriesPage() {
               US Treasuries
             </h1>
             <p className="text-muted-foreground mt-1">
-              US Treasury securities backed by the full faith and credit of the government
+              U.S. Treasury securities backed by the full faith and credit of the government
             </p>
           </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -212,22 +207,14 @@ export default function TreasuriesPage() {
           </div>
         </div>
 
-        <main className="container px-4 md:px-6 py-10 md:py-16 relative">
-          <AuroraBg intensity={0.3} />
-
-          <div className="flex flex-col sm:flex-row sm:items-end gap-4 justify-between">
-            <div>
-              <p className="text-muted-foreground mt-2">
-                US Treasury securities backed by the full faith and credit of the government
-              </p>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              KYC Verified
-            </div>
+        <div className="space-y-8">
+          <div>
+            <p className="text-muted-foreground">
+              Invest in short, medium, and long-term U.S. Treasury securities with competitive yields.
+            </p>
           </div>
 
-          <div className="mt-8 grid gap-3 sm:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-3">
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -262,11 +249,11 @@ export default function TreasuriesPage() {
             </Select>
           </div>
 
-          <WalletGuard className="mt-8" gatedText="Wallet connection required to view treasury details.">
-            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <WalletGuard gatedText="Wallet connection required to view treasury details.">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {filtered.map((treasury, i) => (
                 <FadeIn key={treasury.name} delay={i * 0.04}>
-                  <GlassCard className="p-6">
+                  <GlassCard className="p-6 h-full flex flex-col">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-lg font-medium text-foreground">{treasury.name}</h3>
                       <Badge className={getMaturityColor(treasury.maturity)}>{treasury.maturity}</Badge>
@@ -277,22 +264,22 @@ export default function TreasuriesPage() {
                       <p className="text-sm text-muted-foreground">US Government Backed</p>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2 text-sm mb-4">
+                    <div className="grid grid-cols-3 gap-2 text-sm mb-6 flex-1">
                       <div className="rounded px-3 py-2 bg-white/70 border border-slate-200">
-                        <p className="text-muted-foreground">Yield</p>
+                        <p className="text-muted-foreground text-xs">Yield</p>
                         <p className="font-medium text-foreground">{treasury.yield}%</p>
                       </div>
                       <div className="rounded px-3 py-2 bg-white/70 border border-slate-200">
-                        <p className="text-muted-foreground">Coupon</p>
+                        <p className="text-muted-foreground text-xs">Coupon</p>
                         <p className="font-medium text-foreground">{treasury.couponRate}%</p>
                       </div>
                       <div className="rounded px-3 py-2 bg-white/70 border border-slate-200">
-                        <p className="text-muted-foreground">Price</p>
+                        <p className="text-muted-foreground text-xs">Price</p>
                         <p className="font-medium text-foreground">${treasury.price}</p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 mt-auto">
                       <Button
                         size="sm"
                         className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95"
@@ -320,201 +307,157 @@ export default function TreasuriesPage() {
               ))}
             </div>
           </WalletGuard>
+        </div>
 
-          {/* Details Modal */}
-          <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal}>
-            <DialogContent className="max-w-2xl bg-white border-slate-200">
-              <DialogHeader>
-                <DialogTitle className="text-xl font-semibold text-foreground">{selectedTreasury?.name}</DialogTitle>
-              </DialogHeader>
-              {selectedTreasury && (
-                <div className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-[#3A86FF]" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">Maturity</p>
-                          <p className="font-medium text-foreground">{selectedTreasury.maturity}</p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <TrendingUp className="w-4 h-4 text-[#3A86FF]" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">Yield to Maturity</p>
-                          <p className="font-medium text-foreground">{selectedTreasury.yield}%</p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <DollarSign className="w-4 h-4 text-[#3A86FF]" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">Coupon Rate</p>
-                          <p className="font-medium text-foreground">{selectedTreasury.couponRate}%</p>
-                        </div>
+        {/* Details Modal */}
+        <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal}>
+          <DialogContent className="max-w-2xl bg-white border-slate-200">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-semibold text-foreground">{selectedTreasury?.name}</DialogTitle>
+            </DialogHeader>
+            {selectedTreasury && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-[#3A86FF]" />
+                      <div>
+                        <p className="text-sm text-muted-foreground">Maturity</p>
+                        <p className="font-medium text-foreground">{selectedTreasury.maturity}</p>
                       </div>
                     </div>
 
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2">
-                        <Users className="w-4 h-4 text-[#3A86FF]" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">Tokens Available</p>
-                          <p className="font-medium text-foreground">
-                            {selectedTreasury.tokensAvailable.toLocaleString()} /{" "}
-                            {selectedTreasury.totalTokens.toLocaleString()}
-                          </p>
-                        </div>
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="w-4 h-4 text-[#3A86FF]" />
+                      <div>
+                        <p className="text-sm text-muted-foreground">Yield to Maturity</p>
+                        <p className="font-medium text-foreground">{selectedTreasury.yield}%</p>
                       </div>
+                    </div>
 
-                      <div className="flex items-center gap-2">
-                        <DollarSign className="w-4 h-4 text-[#3A86FF]" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">Price per Token</p>
-                          <p className="font-medium text-foreground">${selectedTreasury.price} USDC</p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <Shield className="w-4 h-4 text-[#3A86FF]" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">CUSIP</p>
-                          <p className="font-medium text-foreground font-mono">{selectedTreasury.cusip}</p>
-                        </div>
+                    <div className="flex items-center gap-2">
+                      <DollarSign className="w-4 h-4 text-[#3A86FF]" />
+                      <div>
+                        <p className="text-sm text-muted-foreground">Coupon Rate</p>
+                        <p className="font-medium text-foreground">{selectedTreasury.couponRate}%</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 p-4 bg-slate-50 rounded-lg">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Issue Date</p>
-                      <p className="font-medium text-foreground">{selectedTreasury.issueDate}</p>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2">
+                      <Users className="w-4 h-4 text-[#3A86FF]" />
+                      <div>
+                        <p className="text-sm text-muted-foreground">Tokens Available</p>
+                        <p className="font-medium text-foreground">
+                          {selectedTreasury.tokensAvailable.toLocaleString()} /{" "}
+                          {selectedTreasury.totalTokens.toLocaleString()}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Maturity Date</p>
-                      <p className="font-medium text-foreground">{selectedTreasury.maturityDate}</p>
+
+                    <div className="flex items-center gap-2">
+                      <DollarSign className="w-4 h-4 text-[#3A86FF]" />
+                      <div>
+                        <p className="text-sm text-muted-foreground">Price per Token</p>
+                        <p className="font-medium text-foreground">${selectedTreasury.price} USDC</p>
+                      </div>
                     </div>
-                  </div>
 
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-2">Description</p>
-                    <p className="text-foreground">{selectedTreasury.description}</p>
-                  </div>
-
-                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Shield className="w-4 h-4 text-green-600" />
-                      <p className="text-sm font-medium text-green-700">Government Guarantee</p>
+                    <div className="flex items-center gap-2">
+                      <Shield className="w-4 h-4 text-[#3A86FF]" />
+                      <div>
+                        <p className="text-sm text-muted-foreground">CUSIP</p>
+                        <p className="font-medium text-foreground font-mono">{selectedTreasury.cusip}</p>
+                      </div>
                     </div>
-                    <p className="text-sm text-green-600">
-                      Backed by the full faith and credit of the United States Government
-                    </p>
-                  </div>
-
-                  <div className="flex gap-3 pt-4">
-                    <Button
-                      className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95"
-                      onClick={() => {
-                        setShowDetailsModal(false)
-                        handleInvestNow(selectedTreasury)
-                      }}
-                      disabled={!selectedTreasury.available}
-                    >
-                      Invest Now
-                    </Button>
-                    <Button variant="outline" onClick={() => setShowDetailsModal(false)}>
-                      Close
-                    </Button>
                   </div>
                 </div>
-              )}
-            </DialogContent>
-          </Dialog>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
 
-          {/* Investment Modal */}
-          <Dialog open={showInvestModal} onOpenChange={setShowInvestModal}>
-            <DialogContent className="max-w-md bg-white border-slate-200">
-              <DialogHeader>
-                <DialogTitle className="text-xl font-semibold text-foreground">
-                  Invest in {selectedTreasury?.name}
-                </DialogTitle>
-              </DialogHeader>
-              {selectedTreasury && (
-                <div className="space-y-6">
-                  <div className="p-4 bg-slate-50 rounded-lg">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm text-muted-foreground">Price per Token</span>
-                      <span className="font-medium text-foreground">${selectedTreasury.price} USDC</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">Available Tokens</span>
-                      <span className="font-medium text-foreground">
-                        {selectedTreasury.tokensAvailable.toLocaleString()}
-                      </span>
-                    </div>
+        {/* Investment Modal */}
+        <Dialog open={showInvestModal} onOpenChange={setShowInvestModal}>
+          <DialogContent className="max-w-md bg-white border-slate-200">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-semibold text-foreground">
+                Invest in {selectedTreasury?.name}
+              </DialogTitle>
+            </DialogHeader>
+            {selectedTreasury && (
+              <div className="space-y-6">
+                <div className="p-4 bg-slate-50 rounded-lg">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm text-muted-foreground">Price per Token</span>
+                    <span className="font-medium text-foreground">${selectedTreasury.price} USDC</span>
                   </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="investment-amount" className="text-sm font-medium text-foreground">
-                      Number of Tokens
-                    </Label>
-                    <Input
-                      id="investment-amount"
-                      type="number"
-                      min="1"
-                      max={selectedTreasury.tokensAvailable}
-                      value={investmentAmount}
-                      onChange={(e) => setInvestmentAmount(Math.max(1, Number.parseInt(e.target.value) || 1))}
-                      className="bg-white border-slate-200 text-foreground"
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Minimum: ${selectedTreasury.minimumInvestment} USDC • Maximum:{" "}
-                      {selectedTreasury.tokensAvailable.toLocaleString()} tokens
-                    </p>
-                  </div>
-
-                  <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm text-muted-foreground">Total Investment</span>
-                      <span className="text-lg font-semibold text-[#3A86FF]">
-                        ${totalInvestmentCost.toFixed(2)} USDC
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm mb-1">
-                      <span className="text-muted-foreground">Annual Yield</span>
-                      <span className="font-medium text-green-600">
-                        ${((totalInvestmentCost * selectedTreasury.yield) / 100).toFixed(2)} USDC
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-muted-foreground">Maturity Date</span>
-                      <span className="font-medium text-foreground">{selectedTreasury.maturityDate}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-3 pt-4">
-                    <Button
-                      className="flex-1 bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95"
-                      onClick={() => {
-                        alert(
-                          `Investment of ${investmentAmount} tokens (${totalInvestmentCost.toFixed(2)} USDC) initiated!`,
-                        )
-                        setShowInvestModal(false)
-                      }}
-                      disabled={totalInvestmentCost < selectedTreasury.minimumInvestment}
-                    >
-                      Proceed to Payment
-                    </Button>
-                    <Button variant="outline" onClick={() => setShowInvestModal(false)}>
-                      Cancel
-                    </Button>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">Available Tokens</span>
+                    <span className="font-medium text-foreground">
+                      {selectedTreasury.tokensAvailable.toLocaleString()}
+                    </span>
                   </div>
                 </div>
-              )}
-            </DialogContent>
-          </Dialog>
-        </main>
+
+                <div className="space-y-2">
+                  <Label htmlFor="investment-amount" className="text-sm font-medium text-foreground">
+                    Number of Tokens
+                  </Label>
+                  <Input
+                    id="investment-amount"
+                    type="number"
+                    min="1"
+                    max={selectedTreasury.tokensAvailable}
+                    value={investmentAmount}
+                    onChange={(e) => setInvestmentAmount(Math.max(1, Number.parseInt(e.target.value) || 1))}
+                    className="bg-white border-slate-200 text-foreground"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Minimum: ${selectedTreasury.minimumInvestment} USDC • Maximum:{" "}
+                    {selectedTreasury.tokensAvailable.toLocaleString()} tokens
+                  </p>
+                </div>
+
+                <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm text-muted-foreground">Total Investment</span>
+                    <span className="text-lg font-semibold text-[#3A86FF]">${totalInvestmentCost.toFixed(2)} USDC</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm mb-1">
+                    <span className="text-muted-foreground">Annual Yield</span>
+                    <span className="font-medium text-green-600">
+                      ${((totalInvestmentCost * selectedTreasury.yield) / 100).toFixed(2)} USDC
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground">Maturity Date</span>
+                    <span className="font-medium text-foreground">{selectedTreasury.maturityDate}</span>
+                  </div>
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <Button
+                    className="flex-1 bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95"
+                    onClick={() => {
+                      alert(
+                        `Investment of ${investmentAmount} tokens (${totalInvestmentCost.toFixed(2)} USDC) initiated!`,
+                      )
+                      setShowInvestModal(false)
+                    }}
+                    disabled={totalInvestmentCost < selectedTreasury.minimumInvestment}
+                  >
+                    Proceed to Payment
+                  </Button>
+                  <Button variant="outline" onClick={() => setShowInvestModal(false)}>
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   )
