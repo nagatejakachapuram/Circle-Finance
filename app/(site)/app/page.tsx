@@ -47,7 +47,7 @@ export default function AppPage() {
   const [claimAdded, setClaimAdded] = useState(false)
 
 const { address: userAddress, isConnected } = useAccount()
-
+console.log("User Address:", userAddress, "Is Connected:", isConnected)
   useEffect(() => {
     if (connected && currentStep === "wallet") {
       setCurrentStep("onchain-id")

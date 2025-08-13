@@ -3,11 +3,19 @@ import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import './globals.css'
 
+// import { WagmiProvider } from 'wagmi'
+// import { config } from '../wagmi/config'; 
+// import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+import { Providers } from './providers/providers'
+
 export const metadata: Metadata = {
   title: 'v0 App',
   description: 'Created with v0',
   generator: 'v0.dev',
 }
+
+// const queryClient = new QueryClient()
 
 export default function RootLayout({
   children,
@@ -16,6 +24,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+
+        {/* <WagmiProvider config={config}> */}
+           {/* <QueryClientProvider client={queryClient}> */}
       <head>
         <style>{`
 html {
@@ -25,7 +36,13 @@ html {
 }
         `}</style>
       </head>
-      <body>{children}</body>
+        <body>
+        <Providers>
+          {children}
+        </Providers>
+      </body>
+      {/* </QueryClientProvider> */}
+      {/* </WagmiProvider> */}
     </html>
   )
 }
