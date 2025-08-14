@@ -16,6 +16,18 @@ type WalletCtx = {
 
 const Ctx = createContext<WalletCtx | undefined>(undefined)
 
+const POLYGON_AMOY_CONFIG = {
+  chainId: "0x13882", // 80002 in hex
+  chainName: "Polygon Amoy Testnet",
+  nativeCurrency: {
+    name: "MATIC",
+    symbol: "MATIC",
+    decimals: 18,
+  },
+  rpcUrls: ["https://rpc-amoy.polygon.technology/"],
+  blockExplorerUrls: ["https://amoy.polygonscan.com/"],
+}
+
 declare global {
   interface Window {
     ethereum?: any
@@ -26,6 +38,35 @@ export function WalletProvider({ children }: { children?: React.ReactNode }) {
   const [address, setAddress] = useState<string | null>(null)
   const [isConnecting, setIsConnecting] = useState(false)
   const [showWalletModal, setShowWalletModal] = useState(false)
+
+  const switchToPolygonAmoy = async () => {
+    if (!window.ethereum) return false
+
+    try {
+      // Try to switch to Polygon Amoy
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: POLYGON_AMOY_CONFIG.chainId }],
+      })
+      return true
+    } catch (switchError: any) {
+      // If network doesn't exist, add it
+      if (switchError.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [POLYGON_AMOY_CONFIG],
+          })
+          return true
+        } catch (addError) {
+          console.error("Error adding Polygon Amoy network:", addError)
+          return false
+        }
+      }
+      console.error("Error switching to Polygon Amoy:", switchError)
+      return false
+    }
+  }
 
   useEffect(() => {
     // Check if wallet was previously connected
@@ -78,6 +119,12 @@ export function WalletProvider({ children }: { children?: React.ReactNode }) {
 
         if (accounts.length > 0) {
           setAddress(accounts[0])
+
+          const networkSwitched = await switchToPolygonAmoy()
+          if (!networkSwitched) {
+            alert("Please manually switch to Polygon Amoy testnet in your wallet settings.")
+          }
+
           setShowWalletModal(false)
         }
       } else {
