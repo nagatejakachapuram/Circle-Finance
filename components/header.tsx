@@ -48,7 +48,7 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className="hidden md:flex items-center gap-2">
+          {/* <div className="hidden md:flex items-center gap-2">
             {connected ? (
               <>
                 <Button
@@ -74,7 +74,7 @@ export default function Header() {
                 {"Connect Wallet"}
               </Button>
             )}
-          </div>
+          </div> */}
 
           <div className="md:hidden">
             <Sheet open={open} onOpenChange={setOpen}>

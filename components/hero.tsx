@@ -8,13 +8,13 @@ import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Wallet, ArrowRight } from "lucide-react"
 import { useWallet } from "./wallet-context"
-import AuroraBg from "./aurora-bg"
+// import AuroraBg from "./aurora-bg"
 import { GlassCard } from "./glass-card"
 import { useCallback, useRef } from "react"
 import HeroVisualGrid from "./hero-visual"
 import HeroVisualArc from "./hero-visual-arc"
 import HeroVisualMesh from "./hero-visual-mesh"
-import HeroVisualPortfolio from "./hero-visual-portfolio"
+// import HeroVisualPortfolio from "./hero-visual-portfolio"
 
 export default function Hero() {
   const { connected, connect } = useWallet()
@@ -65,7 +65,7 @@ export default function Hero() {
 
   return (
     <section className="relative overflow-hidden">
-      <AuroraBg intensity={1.2} />
+      {/* <AuroraBg intensity={1.2} /> */}
       <div className="container px-4 md:px-6 py-16 md:py-28 relative">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
@@ -155,7 +155,7 @@ export default function Hero() {
                     "linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.7)), linear-gradient(120deg, rgba(58,134,255,0.06), rgba(58,134,255,0))",
                 }}
               />
-              {visual === "portfolio" ? (
+              {/* {visual === "portfolio" ? (
                 <HeroVisualPortfolio style={visualStyle} />
               ) : visual === "arc" ? (
                 <HeroVisualArc style={visualStyle} />
@@ -163,7 +163,7 @@ export default function Hero() {
                 <HeroVisualMesh style={visualStyle} />
               ) : (
                 <HeroVisualGrid style={visualStyle} />
-              )}
+              )} */}
             </GlassCard>
           </motion.div>
         </div>

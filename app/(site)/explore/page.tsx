@@ -12,7 +12,7 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { GlassCard } from "@/components/glass-card"
 import { FadeIn } from "@/components/motion"
-import AuroraBg from "@/components/aurora-bg"
+// import AuroraBg from "@/components/aurora-bg"
 
 type Estate = {
   name: string
@@ -53,7 +53,7 @@ export default function ExplorePage() {
     <div className="min-h-dvh bg-white relative overflow-hidden">
       <Header />
       <main className="container px-4 md:px-6 py-10 md:py-16 relative">
-        <AuroraBg intensity={0.5} />
+        {/* <AuroraBg intensity={0.5} /> */}
         <div className="flex flex-col sm:flex-row sm:items-end gap-4 justify-between">
           <div>
             <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground">{"Explore Estates"}</h1>
