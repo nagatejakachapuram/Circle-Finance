@@ -57,10 +57,13 @@ export function AppSidebar() {
   return (
     <Sidebar variant="inset">
       <SidebarHeader>
-        <div className="flex items-center gap-2 px-4 py-2">
+        <Link
+          href="/"
+          className="flex items-center gap-2 px-4 py-2 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer"
+        >
           <div className="h-8 w-8 rounded-full ring-2 ring-slate-200/80 bg-[conic-gradient(from_180deg_at_50%_50%,#3A86FF_0%,#8ab6ff_40%,#3A86FF_100%)]" />
           <span className="font-semibold tracking-tight text-foreground">Circle Pay</span>
-        </div>
+        </Link>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>

@@ -8,10 +8,10 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
 import { WalletGuard } from "@/components/wallet-guard"
 import { GlassCard } from "@/components/glass-card"
 import { FadeIn } from "@/components/motion"
+import { InvestmentModal } from "@/components/investment-modal"
 
 type Estate = {
   name: string
@@ -121,7 +121,6 @@ export default function AppExplorePage() {
   const [sort, setSort] = useState<string>("apy_desc")
   const [selectedProperty, setSelectedProperty] = useState<Estate | null>(null)
   const [showDetailsModal, setShowDetailsModal] = useState(false)
-  const [showInvestModal, setShowInvestModal] = useState(false)
   const [investmentAmount, setInvestmentAmount] = useState(1)
 
   const filtered = useMemo(() => {
@@ -146,10 +145,8 @@ export default function AppExplorePage() {
 
   const handleInvestNow = (property: Estate) => {
     setSelectedProperty(property)
-    setShowInvestModal(true)
+    setShowDetailsModal(false)
   }
-
-  const totalInvestmentCost = selectedProperty ? investmentAmount * selectedProperty.price : 0
 
   return (
     <div className="min-h-dvh bg-white relative overflow-hidden flex-1 space-y-6 p-6">
@@ -356,15 +353,8 @@ export default function AppExplorePage() {
               <div className="flex gap-3 pt-4">
                 <Button
                   className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95"
-                  onClick={() => {
-                    setShowDetailsModal(false)
-                    handleInvestNow(selectedProperty)
-                  }}
-                  disabled={!selectedProperty.available}
+                  onClick={() => setShowDetailsModal(false)}
                 >
-                  Invest Now
-                </Button>
-                <Button variant="outline" onClick={() => setShowDetailsModal(false)}>
                   Close
                 </Button>
               </div>
@@ -373,80 +363,13 @@ export default function AppExplorePage() {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={showInvestModal} onOpenChange={setShowInvestModal}>
-        <DialogContent className="max-w-md bg-white border-slate-200">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-semibold text-foreground">
-              Invest in {selectedProperty?.name}
-            </DialogTitle>
-          </DialogHeader>
-          {selectedProperty && (
-            <div className="space-y-6">
-              <div className="p-4 bg-slate-50 rounded-lg">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-muted-foreground">Price per Token</span>
-                  <span className="font-medium text-foreground">${selectedProperty.price.toFixed(2)} USDC</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Available Tokens</span>
-                  <span className="font-medium text-foreground">
-                    {selectedProperty.tokensAvailable.toLocaleString()}
-                  </span>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="investment-amount" className="text-sm font-medium text-foreground">
-                  Number of Tokens
-                </Label>
-                <Input
-                  id="investment-amount"
-                  type="number"
-                  min="1"
-                  max={selectedProperty.tokensAvailable}
-                  value={investmentAmount}
-                  onChange={(e) => setInvestmentAmount(Math.max(1, Number.parseInt(e.target.value) || 1))}
-                  className="bg-white border-slate-200 text-foreground"
-                />
-                <p className="text-xs text-muted-foreground">
-                  Maximum: {selectedProperty.tokensAvailable.toLocaleString()} tokens
-                </p>
-              </div>
-
-              <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-muted-foreground">Total Investment</span>
-                  <span className="text-lg font-semibold text-[#3A86FF]">${totalInvestmentCost.toFixed(2)} USDC</span>
-                </div>
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-muted-foreground">Expected Annual Return</span>
-                  <span className="font-medium text-green-600">
-                    ${((totalInvestmentCost * selectedProperty.apy) / 100).toFixed(2)} USDC
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex gap-3 pt-4">
-                <Button
-                  className="flex-1 bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95"
-                  onClick={() => {
-                    // Here you would integrate with payment processing
-                    alert(
-                      `Investment of ${investmentAmount} tokens (${totalInvestmentCost.toFixed(2)} USDC) initiated!`,
-                    )
-                    setShowInvestModal(false)
-                  }}
-                >
-                  Proceed to Payment
-                </Button>
-                <Button variant="outline" onClick={() => setShowInvestModal(false)}>
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <InvestmentModal
+        open={showDetailsModal}
+        onOpenChange={setShowDetailsModal}
+        asset={selectedProperty || ESTATES[0]}
+        investmentType="estate"
+        recipientAddress="0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6" // Replace with your treasury address
+      />
     </div>
   )
 }
