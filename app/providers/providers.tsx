@@ -3,7 +3,7 @@
 "use client"; // 👈 Mark as a Client Component
 
 import { WagmiProvider, createConfig, http } from 'wagmi';
-import { mainnet, sepolia } from 'wagmi/chains';
+import { mainnet, sepolia, polygonAmoy } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 
@@ -12,10 +12,9 @@ const queryClient = new QueryClient();
 
 // Your wagmi config
 export const config = createConfig({
-  chains: [mainnet, sepolia],
+  chains: [polygonAmoy],
   transports: {
-    [mainnet.id]: http(),
-    [sepolia.id]: http(),
+    [polygonAmoy.id]: http("https://api.zan.top/polygon-amoy")
   },
 });
 

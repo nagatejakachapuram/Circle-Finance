@@ -7,7 +7,7 @@ import './globals.css'
 // import { config } from '../wagmi/config'; 
 // import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-import { Providers } from './providers/providers'
+// import { Providers } from './providers/providers'
 
 export const metadata: Metadata = {
   title: 'v0 App',
@@ -37,9 +37,9 @@ html {
         `}</style>
       </head>
         <body>
-        <Providers>
+        {/* <Providers> */}
           {children}
-        </Providers>
+        {/* </Providers> */}
       </body>
       {/* </QueryClientProvider> */}
       {/* </WagmiProvider> */}
