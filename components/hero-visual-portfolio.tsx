@@ -1,7 +1,10 @@
 "use client"
 
+import type React from "react"
+
 import { motion, useReducedMotion, type MotionValue } from "framer-motion"
 import { cn } from "@/lib/utils"
+import { Building, Home, Factory, ShoppingBag, Warehouse } from "lucide-react"
 
 export default function HeroVisualPortfolio({
   className = "",
@@ -19,11 +22,7 @@ export default function HeroVisualPortfolio({
   const reduce = useReducedMotion()
 
   return (
-    <motion.div
-      aria-hidden="true"
-      className={cn("absolute inset-0 pointer-events-none", className)}
-      style={style}
-    >
+    <motion.div aria-hidden="true" className={cn("absolute inset-0 pointer-events-none", className)} style={style}>
       {/* Device frame vibe */}
       <div className="absolute inset-0 p-6 md:p-8">
         <div className="relative h-full w-full rounded-2xl border border-slate-200 bg-white/90 backdrop-blur-xl shadow-[0_2px_10px_rgba(15,23,42,0.06),0_24px_64px_-32px_rgba(15,23,42,0.24)] overflow-hidden">
@@ -36,115 +35,109 @@ export default function HeroVisualPortfolio({
             }}
           />
           {/* Content grid */}
-          <div className="relative h-full grid grid-rows-1 grid-cols-1 md:grid-cols-[1.2fr_0.8fr] gap-4 md:gap-6 p-4 md:p-6">
-            {/* Sector Allocation card */}
+          <div className="relative h-full grid grid-rows-1 grid-cols-1 md:grid-cols-[1.4fr_0.6fr] gap-4 md:gap-6 p-4 md:p-6">
+            {/* Holdings Table */}
             <div className="relative rounded-xl border border-slate-200 bg-white/80">
               <div className="p-4 md:p-5">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-medium text-foreground">Sector Allocation</h3>
-                  <span className="text-xs text-muted-foreground">as of 11/21/2024</span>
-                </div>
-                <div className="mt-4 grid gap-4 md:grid-cols-[1fr_1.2fr]">
-                  {/* Left list */}
-                  <ul className="space-y-2">
-                    {[
-                      ["Technology", "32.63%"],
-                      ["Financial Services", "13.45%"],
-                      ["Consumer Cyclical", "10.91%"],
-                      ["Healthcare", "10.58%"],
-                      ["Communication Services", "8.87%"],
-                      ["Industrials", "7.69%"],
-                      ["Real Estate", "2.24%"],
-                      ["Basic Materials", "1.85%"],
-                    ].map(([label, pct]) => (
-                      <li key={label as string} className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="inline-block size-1.5 rounded-full bg-[#3A86FF]/60" />
-                          <span className="text-xs text-muted-foreground">{label}</span>
-                        </div>
-                        <span className="text-xs tabular-nums text-foreground">{pct}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  {/* Right treemap-like grid */}
-                  <div className="relative">
-                    <div className="grid grid-cols-6 grid-rows-6 gap-2">
-                      {/* Pre-sized tiles to suggest a treemap */}
-                      <Tile className="col-span-3 row-span-3" label="Technology" pct="32.63%" tone="dark" />
-                      <Tile className="col-span-2 row-span-2" label="Consumer Cyclical" pct="10.91%" tone="mid" />
-                      <Tile className="col-span-1 row-span-2" label="Healthcare" pct="10.58%" tone="mid" />
-                      <Tile className="col-span-2 row-span-2" label="Financial Services" pct="13.45%" tone="mid" />
-                      <Tile className="col-span-2 row-span-2" label="Industrials" pct="7.69%" tone="light" />
-                      <Tile className="col-span-1 row-span-2" label="Real Estate" pct="2.24%" tone="light" />
-                      <Tile className="col-span-1 row-span-2" label="Basic Materials" pct="1.85%" tone="light" />
-                    </div>
-                    {/* shimmering sweep */}
-                    {!reduce && (
-                      <motion.div
-                        className="pointer-events-none absolute inset-0 rounded-lg"
-                        style={{
-                          background:
-                            "linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%)",
-                          filter: "blur(8px)",
-                        }}
-                        animate={{ x: ["-20%", "120%"] }}
-                        transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
-                      />
-                    )}
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-medium text-foreground">Holdings</h3>
+                  <div className="text-xs text-muted-foreground">
+                    <span className="mr-2">Tracked Asset</span>
+                    <span>Token Ticker</span>
                   </div>
+                </div>
+
+                {/* Holdings Table Header */}
+                <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr] gap-2 pb-2 border-b border-slate-200 text-xs text-muted-foreground">
+                  <div>Asset</div>
+                  <div className="text-right">Value</div>
+                  <div className="text-right">24h ($)</div>
+                  <div className="text-right">24h (%)</div>
+                  <div className="text-center">Category</div>
+                  <div className="text-center">Last 7 Days</div>
+                </div>
+
+                {/* Holdings Rows */}
+                <div className="space-y-2 mt-3">
+                  <HoldingRow
+                    icon={<Building className="w-4 h-4" />}
+                    name="Miami Commercial Plaza"
+                    ticker="MCP"
+                    value="$70,370.40"
+                    change24h="$119.63"
+                    changePercent="0.17%"
+                    category="Commercial"
+                    trend="up"
+                  />
+                  <HoldingRow
+                    icon={<Home className="w-4 h-4" />}
+                    name="Brooklyn Residential Fund"
+                    ticker="BRF"
+                    value="$58,691.40"
+                    change24h="$1,285.34"
+                    changePercent="2.19%"
+                    category="Residential"
+                    trend="up"
+                  />
+                  <HoldingRow
+                    icon={<Factory className="w-4 h-4" />}
+                    name="Austin Industrial Complex"
+                    ticker="AIC"
+                    value="$40,318.00"
+                    change24h="$4.80"
+                    changePercent="0.012%"
+                    category="Industrial"
+                    trend="up"
+                  />
+                  <HoldingRow
+                    icon={<ShoppingBag className="w-4 h-4" />}
+                    name="Seattle Retail Spaces"
+                    ticker="SRS"
+                    value="$37,853.20"
+                    change24h="-$741.92"
+                    changePercent="-1.96%"
+                    category="Retail"
+                    trend="down"
+                  />
+                  <HoldingRow
+                    icon={<Warehouse className="w-4 h-4" />}
+                    name="Denver Mixed-Use Development"
+                    ticker="DMD"
+                    value="$21,087.00"
+                    change24h="-$206.65"
+                    changePercent="-0.98%"
+                    category="Mixed-Use"
+                    trend="down"
+                  />
                 </div>
               </div>
             </div>
 
-            {/* Buy panel card */}
+            {/* Account Summary */}
             <div className="relative rounded-xl border border-slate-200 bg-white/85">
               <div className="p-4 md:p-5">
-                <div className="flex items-center gap-4 text-sm">
-                  <span className="font-medium text-foreground">Buy</span>
-                  <span className="text-muted-foreground">Sell</span>
-                  <span className="text-muted-foreground">Bridge</span>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-medium text-foreground">Account</h3>
+                  <div className="px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">Healthy</div>
                 </div>
 
-                <div className="mt-4 space-y-3">
-                  <Row label="Order Type" value="Market Order" />
-                  <div className="grid grid-cols-2 gap-2">
-                    <Pill active label="Shares" />
-                    <Pill label="USD" />
-                  </div>
-                  <Row label="Amount" value="100" />
-                  <Row label="Market Price" value="$611.09" />
-                  <Row label="Fee" value="$0.00" />
-                  <Row label="Network Cost" value="$0.00" />
+                {/* Account Metrics */}
+                <div className="space-y-3">
+                  <AccountRow label="Total Buying Power" value="$395,531" />
+                  <AccountRow label="Total Holdings" value="$228,320" />
+                  <AccountRow label="Margin Used" value="$61,109" />
+                  <AccountRow label="Margin Available" value="$167,211" />
+                  <AccountRow label="Margin Call Threshold" value="$81,479" />
                 </div>
 
-                <div className="mt-4">
-                  <div className="text-xs text-muted-foreground">Total Cost</div>
-                  <div className="text-3xl font-semibold text-foreground">$61,109</div>
-                </div>
-
-                <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50/60 p-3">
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Total Buying Power</span>
-                    <span className="tabular-nums">$456,640</span>
-                  </div>
-                  <div className="mt-2 relative h-6 rounded-md bg-white/80 border border-slate-200 overflow-hidden">
-                    {!reduce && (
-                      <motion.div
-                        className="absolute inset-y-0 left-0 w-2/3 bg-[linear-gradient(90deg,rgba(58,134,255,0.25)_0%,rgba(58,134,255,0.45)_50%,rgba(58,134,255,0.25)_100%)]"
-                        animate={{ x: [0, 6, 0] }}
-                        transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-                      />
-                    )}
-                    <div className="absolute inset-0 bg-[repeating-linear-gradient(90deg,transparent_0,transparent_10px,rgba(58,134,255,0.2)_10px,rgba(58,134,255,0.2)_12px)]" />
-                    <div className="absolute inset-0 ring-1 ring-inset ring-slate-200/80 rounded-md" />
-                  </div>
-                  <div className="mt-1 text-[10px] text-center text-muted-foreground">2x margin</div>
-                </div>
-
-                <div className="mt-4">
-                  <div className="h-10 w-full rounded-md bg-slate-900 text-white grid place-items-center text-sm">
-                    Review Order
-                  </div>
+                {/* Action Buttons */}
+                <div className="flex gap-2 mt-6">
+                  <button className="flex-1 h-10 rounded-md bg-slate-900 text-white text-sm font-medium hover:bg-slate-800 transition-colors">
+                    Deposit
+                  </button>
+                  <button className="flex-1 h-10 rounded-md border border-slate-300 text-slate-700 text-sm font-medium hover:bg-slate-50 transition-colors">
+                    Withdraw
+                  </button>
                 </div>
               </div>
             </div>
@@ -163,57 +156,70 @@ export default function HeroVisualPortfolio({
   )
 }
 
-function Tile({
-  className,
-  label,
-  pct,
-  tone = "mid",
+function HoldingRow({
+  icon,
+  name,
+  ticker,
+  value,
+  change24h,
+  changePercent,
+  category,
+  trend,
 }: {
-  className?: string
-  label: string
-  pct: string
-  tone?: "dark" | "mid" | "light"
+  icon: React.ReactNode
+  name: string
+  ticker: string
+  value: string
+  change24h: string
+  changePercent: string
+  category: string
+  trend: "up" | "down"
 }) {
-  const bg =
-    tone === "dark"
-      ? "bg-[linear-gradient(135deg,#0f172a,#1d3b78)]"
-      : tone === "mid"
-      ? "bg-[linear-gradient(135deg,#264d94,#3A86FF)]"
-      : "bg-[linear-gradient(135deg,#6ea2ff,#b7d0ff)]"
+  const isPositive = trend === "up"
+
   return (
-    <div className={cn("relative rounded-md overflow-hidden", className)}>
-      <div className={cn("absolute inset-0", bg)} />
-      <div className="absolute inset-0 ring-1 ring-inset ring-white/30 rounded-md" />
-      <div className="absolute bottom-1.5 left-1.5 right-1.5 text-[10px] text-white/95 flex justify-between">
-        <span className="truncate pr-1">{label}</span>
-        <span className="tabular-nums">{pct}</span>
+    <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_1fr] gap-2 py-2 items-center text-xs hover:bg-slate-50/50 rounded-md px-1">
+      <div className="flex items-center gap-2">
+        <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-600">{icon}</div>
+        <div>
+          <div className="font-medium text-foreground">{name}</div>
+          <div className="text-muted-foreground">{ticker}</div>
+        </div>
+      </div>
+      <div className="text-right font-medium text-foreground">{value}</div>
+      <div className={cn("text-right font-medium", isPositive ? "text-green-600" : "text-red-600")}>{change24h}</div>
+      <div className={cn("text-right font-medium", isPositive ? "text-green-600" : "text-red-600")}>
+        {isPositive ? "▲" : "▼"} {changePercent}
+      </div>
+      <div className="text-center text-muted-foreground">{category}</div>
+      <div className="flex justify-center">
+        <MiniChart trend={trend} />
       </div>
     </div>
   )
 }
 
-function Row({ label, value }: { label: string; value: string }) {
+function AccountRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid grid-cols-[1fr_auto] items-center gap-3">
-      <div className="text-xs text-muted-foreground">{label}</div>
-      <div className="h-8 min-w-[140px] rounded-md border border-slate-200 bg-white/80 px-2 text-sm text-foreground grid place-items-center">
-        {value}
-      </div>
+    <div className="flex items-center justify-between">
+      <span className="text-xs text-muted-foreground">{label}</span>
+      <span className="text-sm font-medium text-foreground">{value}</span>
     </div>
   )
 }
 
-function Pill({ label, active = false }: { label: string; active?: boolean }) {
+function MiniChart({ trend }: { trend: "up" | "down" }) {
   return (
-    <div
-      className={cn(
-        "h-8 rounded-md border px-3 grid place-items-center text-xs",
-        active
-          ? "border-[#3A86FF] text-[#0f172a] bg-[linear-gradient(180deg,#eaf1ff,#ffffff)]"
-          : "border-slate-200 text-muted-foreground bg-white/80"
-      )}
-    >
-      {label}
+    <div className="w-12 h-6 relative">
+      <svg width="48" height="24" viewBox="0 0 48 24" className="overflow-visible">
+        <path
+          d={trend === "up" ? "M2,20 Q12,16 24,12 Q36,8 46,4" : "M2,4 Q12,8 24,12 Q36,16 46,20"}
+          stroke={trend === "up" ? "#16a34a" : "#dc2626"}
+          strokeWidth="1.5"
+          fill="none"
+          className="opacity-80"
+        />
+      </svg>
     </div>
   )
 }
