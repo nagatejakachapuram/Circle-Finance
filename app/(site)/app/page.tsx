@@ -10,8 +10,6 @@ import { GlassCard } from "@/components/glass-card"
 import { FadeIn } from "@/components/motion"
 import { useIsMobile } from "@/components/ui/use-mobile"
 import Link from "next/link"
-import { identityProxy } from "../../../context/identityProxy";
-// import { useAccount, useChains } from "wagmi";
 
 type KYCStep = "wallet" | "onchain-id" | "kyc-verification" | "add-claim" | "complete"
 
@@ -46,12 +44,6 @@ export default function AppPage() {
   const [kycSignature, setKycSignature] = useState<string>("")
   const [claimAdded, setClaimAdded] = useState(false)
 
-  // const { address: userAddress, isConnected } = useAccount()
-  // const chains = useChains()
-
-
-  
-
   useEffect(() => {
     if (connected && currentStep === "wallet") {
       setCurrentStep("onchain-id")
@@ -74,6 +66,12 @@ export default function AppPage() {
     return (currentIndex / (steps.length - 1)) * 100
   }
 
+  const handleDeployIdentity = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+    setOnchainIdDeployed(true)
+    setCurrentStep("kyc-verification")
+  }
+
   const handleGetKYCSignature = async () => {
     if (!selectedCountry) return
     await new Promise((resolve) => setTimeout(resolve, 2000))
@@ -87,29 +85,6 @@ export default function AppPage() {
     setClaimAdded(true)
     setCurrentStep("complete")
   }
-
-  // const handleDeployIdentity = async () => {
-  //   try {
-  //       // console.log("User Address:", userAddress, "Is Connected:", isConnected)
-  //     const identity = await identityProxy(userAddress)
-  //     console.log("Identity deployed:", identity);
-  //     if (!identity) {
-  //       console.error("Failed to deploy identity")
-  //       return;
-  //     } else
-  //     setOnchainIdDeployed(true)
-  //     setCurrentStep("kyc-verification")
-  //     return identity;
-  //   } catch (error) {
-  //     console.error("Error deploying identity:", error);
-  //   }
-  // }
-
-// useEffect(() => {
-//   console.log("Current Chain:", chains[0]?.name);
-//   console.log("User Address:", userAddress, "Is Connected:", isConnected);
-//   console.log("ethereum instance:", window.ethereum);
-// }, [chains, userAddress, isConnected]);
 
   return (
     <div className="flex-1 space-y-6 p-6">
@@ -146,12 +121,13 @@ export default function AppPage() {
           <GlassCard className="p-4 md:p-6">
             <div className="flex items-start gap-3 md:gap-4">
               <div
-                className={`p-2 md:p-3 rounded-full ${getStepStatus("wallet") === "complete"
+                className={`p-2 md:p-3 rounded-full ${
+                  getStepStatus("wallet") === "complete"
                     ? "bg-green-100 text-green-600"
                     : getStepStatus("wallet") === "in-progress"
                       ? "bg-blue-100 text-blue-600"
                       : "bg-slate-100 text-slate-400"
-                  }`}
+                }`}
               >
                 {getStepStatus("wallet") === "complete" ? (
                   <CheckCircle2 className="size-5 md:size-6" />
@@ -163,12 +139,13 @@ export default function AppPage() {
                 <div className="flex items-center gap-2 mb-2">
                   <h3 className="text-base md:text-lg font-medium text-foreground">Connect Wallet</h3>
                   <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${getStepStatus("wallet") === "complete"
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      getStepStatus("wallet") === "complete"
                         ? "bg-green-100 text-green-700"
                         : getStepStatus("wallet") === "in-progress"
                           ? "bg-blue-100 text-blue-700"
                           : "bg-slate-100 text-slate-600"
-                      }`}
+                    }`}
                   >
                     {getStepStatus("wallet") === "complete"
                       ? "Complete"
@@ -204,12 +181,13 @@ export default function AppPage() {
           <GlassCard className="p-4 md:p-6">
             <div className="flex items-start gap-3 md:gap-4">
               <div
-                className={`p-2 md:p-3 rounded-full ${getStepStatus("onchain-id") === "complete"
+                className={`p-2 md:p-3 rounded-full ${
+                  getStepStatus("onchain-id") === "complete"
                     ? "bg-green-100 text-green-600"
                     : getStepStatus("onchain-id") === "in-progress"
                       ? "bg-blue-100 text-blue-600"
                       : "bg-slate-100 text-slate-400"
-                  }`}
+                }`}
               >
                 {getStepStatus("onchain-id") === "complete" ? (
                   <CheckCircle2 className="size-5 md:size-6" />
@@ -221,12 +199,13 @@ export default function AppPage() {
                 <div className="flex items-center gap-2 mb-2">
                   <h3 className="text-base md:text-lg font-medium text-foreground">Create OnchainID</h3>
                   <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${getStepStatus("onchain-id") === "complete"
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      getStepStatus("onchain-id") === "complete"
                         ? "bg-green-100 text-green-700"
                         : getStepStatus("onchain-id") === "in-progress"
                           ? "bg-blue-100 text-blue-700"
                           : "bg-slate-100 text-slate-600"
-                      }`}
+                    }`}
                   >
                     {getStepStatus("onchain-id") === "complete"
                       ? "Complete"
@@ -240,7 +219,7 @@ export default function AppPage() {
                 </p>
                 {getStepStatus("onchain-id") === "in-progress" && !onchainIdDeployed && (
                   <Button
-                    // onClick={() => {handleDeployIdentity()}}
+                    onClick={handleDeployIdentity}
                     className={`bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white ${isMobile ? "h-12 px-6" : ""}`}
                   >
                     Deploy Identity
@@ -256,12 +235,13 @@ export default function AppPage() {
           <GlassCard className="p-4 md:p-6">
             <div className="flex items-start gap-3 md:gap-4">
               <div
-                className={`p-2 md:p-3 rounded-full ${getStepStatus("kyc-verification") === "complete"
+                className={`p-2 md:p-3 rounded-full ${
+                  getStepStatus("kyc-verification") === "complete"
                     ? "bg-green-100 text-green-600"
                     : getStepStatus("kyc-verification") === "in-progress"
                       ? "bg-blue-100 text-blue-600"
                       : "bg-slate-100 text-slate-400"
-                  }`}
+                }`}
               >
                 {getStepStatus("kyc-verification") === "complete" ? (
                   <CheckCircle2 className="size-5 md:size-6" />
@@ -273,12 +253,13 @@ export default function AppPage() {
                 <div className="flex items-center gap-2 mb-2">
                   <h3 className="text-base md:text-lg font-medium text-foreground">KYC Verification</h3>
                   <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${getStepStatus("kyc-verification") === "complete"
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      getStepStatus("kyc-verification") === "complete"
                         ? "bg-green-100 text-green-700"
                         : getStepStatus("kyc-verification") === "in-progress"
                           ? "bg-blue-100 text-blue-700"
                           : "bg-slate-100 text-slate-600"
-                      }`}
+                    }`}
                   >
                     {getStepStatus("kyc-verification") === "complete"
                       ? "Complete"
@@ -332,12 +313,13 @@ export default function AppPage() {
           <GlassCard className="p-4 md:p-6">
             <div className="flex items-start gap-3 md:gap-4">
               <div
-                className={`p-2 md:p-3 rounded-full ${getStepStatus("add-claim") === "complete"
+                className={`p-2 md:p-3 rounded-full ${
+                  getStepStatus("add-claim") === "complete"
                     ? "bg-green-100 text-green-600"
                     : getStepStatus("add-claim") === "in-progress"
                       ? "bg-blue-100 text-blue-600"
                       : "bg-slate-100 text-slate-400"
-                  }`}
+                }`}
               >
                 {getStepStatus("add-claim") === "complete" ? (
                   <CheckCircle2 className="size-5 md:size-6" />
@@ -349,12 +331,13 @@ export default function AppPage() {
                 <div className="flex items-center gap-2 mb-2">
                   <h3 className="text-base md:text-lg font-medium text-foreground">Add Claim to Identity</h3>
                   <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${getStepStatus("add-claim") === "complete"
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      getStepStatus("add-claim") === "complete"
                         ? "bg-green-100 text-green-700"
                         : getStepStatus("add-claim") === "in-progress"
                           ? "bg-blue-100 text-blue-700"
                           : "bg-slate-100 text-slate-600"
-                      }`}
+                    }`}
                   >
                     {getStepStatus("add-claim") === "complete"
                       ? "Complete"

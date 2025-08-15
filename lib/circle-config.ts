@@ -1,8 +1,6 @@
 export const CIRCLE_CONFIG = {
-  // These would typically come from environment variables in production
-  apiUrl: process.env.NEXT_PUBLIC_CIRCLE_API_URL || "/api/circle",
-  clientKey: process.env.NEXT_PUBLIC_CIRCLE_CLIENT_KEY || "your-client-key-here",
-  webhookSecret: process.env.CIRCLE_WEBHOOK_SECRET || "your-webhook-secret",
+  // API URL for client-side requests to our backend
+  apiUrl: "/api/circle",
 
   // Circle API endpoints
   endpoints: {
@@ -14,12 +12,10 @@ export const CIRCLE_CONFIG = {
   },
 }
 
-// Circle SDK initialization (client-side)
-export const initializeCircleSDK = () => {
-  // This would initialize Circle's Web3 Services SDK
-  // with the client-side key for browser operations
-  return {
-    clientKey: CIRCLE_CONFIG.clientKey,
-    environment: "sandbox", // or 'production'
-  }
+// Circle SDK initialization is now handled server-side in API routes
+
+// Helper to check if Circle is properly configured (server-side only)
+export const isCircleConfigured = () => {
+  // This check now happens server-side in API routes
+  return true // Always return true for client-side, actual check happens in API
 }

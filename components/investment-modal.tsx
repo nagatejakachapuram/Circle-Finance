@@ -68,11 +68,44 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
         recipientAddress,
       )
 
-      setPaymentResult(result)
+      if (result.requiresWalletSignature && result.transactionData) {
+        console.log("[v0] Requesting MetaMask transaction approval...")
+
+        // Request MetaMask to send the transaction
+        const txHash = await (window as any).ethereum.request({
+          method: "eth_sendTransaction",
+          params: [
+            {
+              from: walletAddress,
+              to: result.transactionData.to,
+              data: result.transactionData.data,
+              value: result.transactionData.value,
+              gas: result.transactionData.gasLimit,
+            },
+          ],
+        })
+
+        console.log("[v0] Transaction approved by user:", txHash)
+
+        setPaymentResult({
+          success: true,
+          txHash: txHash,
+          data: {
+            walletId: walletAddress,
+            recipientAddress,
+            amount: totalCost,
+            currency: "USDC",
+            timestamp: new Date().toISOString(),
+          },
+        })
+      } else {
+        setPaymentResult(result)
+      }
+
       setShowResult(true)
       setRequiresSignature(false)
 
-      if (result.success) {
+      if (result.success || result.requiresWalletSignature) {
         // Reset form on success
         setTimeout(() => {
           setTokenAmount(1)
@@ -80,13 +113,22 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
           onOpenChange(false)
         }, 3000)
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error("[v0] Transaction failed:", error)
+
+      let errorMessage = "Payment failed. Please ensure you have sufficient USDC balance on Polygon Amoy network."
+
+      if (error.code === 4001) {
+        errorMessage = "Transaction was rejected by user."
+      } else if (error.code === -32603) {
+        errorMessage = "Insufficient USDC balance or gas fees."
+      } else if (error.message?.includes("insufficient funds")) {
+        errorMessage = "Insufficient USDC balance to complete this transaction."
+      }
+
       setPaymentResult({
         success: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : "Payment failed. Please ensure you have sufficient USDC balance on Polygon Amoy network.",
+        error: errorMessage,
       })
       setShowResult(true)
       setRequiresSignature(false)
