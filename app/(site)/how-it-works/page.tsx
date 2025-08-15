@@ -7,7 +7,6 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { FadeIn } from "@/components/motion"
 import { GlassCard } from "@/components/glass-card"
-// import AuroraBg from "@/components/aurora-bg"
 
 const steps = [
   {
@@ -41,7 +40,6 @@ export default function HowItWorksPage() {
     <div className="min-h-dvh bg-white relative overflow-hidden">
       <Header />
       <main className="container px-4 md:px-6 py-12 md:py-20 relative">
-        {/* <AuroraBg intensity={0.6} /> */}
         <div className="max-w-3xl">
           <FadeIn>
             <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground">

@@ -8,7 +8,6 @@ import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Wallet, ArrowRight } from "lucide-react"
 import { useWallet } from "./wallet-context"
-// import AuroraBg from "./aurora-bg"
 import { GlassCard } from "./glass-card"
 import { useCallback, useRef } from "react"
 import HeroVisualGrid from "./hero-visual"
@@ -65,7 +64,6 @@ export default function Hero() {
 
   return (
     <section className="relative overflow-hidden">
-      {/* <AuroraBg intensity={1.2} /> */}
       <div className="container px-4 md:px-6 py-16 md:py-28 relative">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
