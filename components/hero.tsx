@@ -13,7 +13,6 @@ import { useCallback, useRef } from "react"
 import HeroVisualGrid from "./hero-visual"
 import HeroVisualArc from "./hero-visual-arc"
 import HeroVisualMesh from "./hero-visual-mesh"
-import HeroVisualPortfolio from "./hero-visual-portfolio"
 
 export default function Hero() {
   const { connected, connect } = useWallet()
@@ -153,15 +152,7 @@ export default function Hero() {
                     "linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.7)), linear-gradient(120deg, rgba(58,134,255,0.06), rgba(58,134,255,0))",
                 }}
               />
-              {visual === "portfolio" ? (
-                <HeroVisualPortfolio style={visualStyle} />
-              ) : visual === "arc" ? (
-                <HeroVisualArc style={visualStyle} />
-              ) : visual === "mesh" ? (
-                <HeroVisualMesh style={visualStyle} />
-              ) : (
-                <HeroVisualGrid style={visualStyle} />
-              )}
+          
             </GlassCard>
           </motion.div>
         </div>
