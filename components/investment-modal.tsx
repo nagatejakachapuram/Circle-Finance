@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select"
 import { Loader2, CheckCircle, XCircle, Wallet, ArrowLeftRight } from "lucide-react"
 import { useWallet } from "@/components/wallet-context"
 import type { CircleResponse } from "@/lib/circle-api"
@@ -327,14 +327,14 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
             </Label>
             <Select value={selectedChain.toString()} onValueChange={(value) => setSelectedChain(Number(value))}>
               <SelectTrigger className="bg-white border-slate-200 text-foreground">
-                <SelectValue placeholder="Select network">
-                  {selectedChainInfo && (
-                    <div className="flex items-center gap-2">
-                      <ArrowLeftRight className="w-4 h-4" />
-                      {selectedChainInfo.name}
-                    </div>
-                  )}
-                </SelectValue>
+                {selectedChainInfo ? (
+                  <div className="flex items-center gap-2">
+                    <ArrowLeftRight className="w-4 h-4" />
+                    <span>{selectedChainInfo.name}</span>
+                  </div>
+                ) : (
+                  <span className="text-muted-foreground">Select network</span>
+                )}
               </SelectTrigger>
               <SelectContent className="bg-white text-foreground border-slate-200">
                 {availableChains.map((chain) => (
