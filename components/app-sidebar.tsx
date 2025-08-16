@@ -1,8 +1,9 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Building2, TrendingUp, Landmark, PieChart, Settings, Home, LogOut } from "lucide-react"
+import { Building2, TrendingUp, Landmark, PieChart, Settings, Home, LogOut, Fingerprint, Loader2, AlertTriangle } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -16,6 +17,8 @@ import {
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { useWallet } from "@/components/wallet-context"
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 const menuItems = [
   {
@@ -54,6 +57,44 @@ export function AppSidebar() {
   const pathname = usePathname()
   const { disconnect, address } = useWallet()
 
+  // --- START: State and Effect for fetching identity ---
+  const [identityAddress, setIdentityAddress] = useState<string | null>(null)
+  const [isCheckingIdentity, setIsCheckingIdentity] = useState(true)
+
+  useEffect(() => {
+    const checkIdentity = async () => {
+      if (!address) {
+        setIsCheckingIdentity(false)
+        setIdentityAddress(null)
+        return
+      }
+
+      setIsCheckingIdentity(true)
+      try {
+        const response = await fetch(`${API_BASE_URL}/identity/${address}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch identity status")
+        }
+        const data = await response.json()
+        const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
+
+        if (data.identityAddress && data.identityAddress !== ZERO_ADDRESS) {
+          setIdentityAddress(data.identityAddress)
+        } else {
+          setIdentityAddress(null)
+        }
+      } catch (error) {
+        console.error("Error fetching identity:", error)
+        setIdentityAddress(null)
+      } finally {
+        setIsCheckingIdentity(false)
+      }
+    }
+
+    checkIdentity()
+  }, [address]) // Re-run this effect whenever the connected address changes
+  // --- END: State and Effect for fetching identity ---
+
   return (
     <Sidebar variant="inset">
       <SidebarHeader>
@@ -86,6 +127,29 @@ export function AppSidebar() {
       <SidebarFooter>
         {address && (
           <div className="p-4 border-t">
+            {/* --- START: Identity Status Section --- */}
+            <div className="mb-4 pb-4 border-b">
+              {isCheckingIdentity ? (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground animate-pulse">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Checking Identity...</span>
+                </div>
+              ) : identityAddress ? (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Fingerprint className="w-4 h-4 text-blue-500" />
+                  <span className="font-medium text-foreground">
+                    OnchainID: {identityAddress.slice(0, 6)}...{identityAddress.slice(-4)}
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-sm text-amber-600">
+                  <AlertTriangle className="w-4 h-4" />
+                  <span className="font-medium">Identity Not Verified</span>
+                </div>
+              )}
+            </div>
+            {/* --- END: Identity Status Section --- */}
+
             <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <span className="font-medium">

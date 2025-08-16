@@ -1,0 +1,205 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IClaimIssuersRegistry",
+  "sourceName": "contracts/registry/interface/IClaimIssuersRegistry.sol",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "contract IClaimIssuer",
+          "name": "claimIssuer",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "claimTopics",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "ClaimIssuerAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "contract IClaimIssuer",
+          "name": "claimIssuer",
+          "type": "address"
+        }
+      ],
+      "name": "ClaimIssuerRemoved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "contract IClaimIssuer",
+          "name": "claimIssuer",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "claimTopics",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "ClaimTopicsUpdated",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IClaimIssuer",
+          "name": "_claimIssuer",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_claimTopics",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "addClaimIssuer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IClaimIssuer",
+          "name": "_claimIssuer",
+          "type": "address"
+        }
+      ],
+      "name": "getClaimIssuerClaimTopics",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getClaimIssuers",
+      "outputs": [
+        {
+          "internalType": "contract IClaimIssuer[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "claimTopic",
+          "type": "uint256"
+        }
+      ],
+      "name": "getClaimIssuersForClaimTopic",
+      "outputs": [
+        {
+          "internalType": "contract IClaimIssuer[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IClaimIssuer",
+          "name": "_issuer",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_claimTopic",
+          "type": "uint256"
+        }
+      ],
+      "name": "hasClaimTopic",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IClaimIssuer",
+          "name": "_issuer",
+          "type": "address"
+        }
+      ],
+      "name": "isClaimIssuer",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IClaimIssuer",
+          "name": "_claimIssuer",
+          "type": "address"
+        }
+      ],
+      "name": "removeClaimIssuer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IClaimIssuer",
+          "name": "_claimIssuer",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_claimTopics",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "updateIssuerClaimTopics",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
