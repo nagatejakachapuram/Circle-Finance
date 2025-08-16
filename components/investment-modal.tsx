@@ -30,7 +30,7 @@ interface InvestmentModalProps {
 export function InvestmentModal({ open, onOpenChange, asset, investmentType, recipientAddress }: InvestmentModalProps) {
   const { address: walletAddress } = useWallet()
   const [tokenAmount, setTokenAmount] = useState(1)
-  const [selectedChain, setSelectedChain] = useState<number>(137) // Default to Polygon
+  const [selectedChain, setSelectedChain] = useState<number>(11155111) // Default to Ethereum Sepolia
   const [isProcessing, setIsProcessing] = useState(false)
   const [paymentResult, setPaymentResult] = useState<CircleResponse | null>(null)
   const [showResult, setShowResult] = useState(false)
@@ -47,6 +47,8 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
     name: config.name,
     symbol: config.nativeSymbol,
   }))
+
+  const selectedChainInfo = CCTP_CONFIG.chains[selectedChain]
 
   const handleInvestment = async () => {
     if (!walletAddress) {
@@ -325,7 +327,14 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
             </Label>
             <Select value={selectedChain.toString()} onValueChange={(value) => setSelectedChain(Number(value))}>
               <SelectTrigger className="bg-white border-slate-200 text-foreground">
-                <SelectValue placeholder="Select network" />
+                <SelectValue placeholder="Select network">
+                  {selectedChainInfo && (
+                    <div className="flex items-center gap-2">
+                      <ArrowLeftRight className="w-4 h-4" />
+                      {selectedChainInfo.name}
+                    </div>
+                  )}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="bg-white text-foreground border-slate-200">
                 {availableChains.map((chain) => (
@@ -387,8 +396,8 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
           <Alert className="border-blue-200 bg-blue-50">
             <Wallet className="h-4 w-4 text-blue-600" />
             <AlertDescription className="text-blue-800">
-              Ensure you have sufficient USDC balance on {CCTP_CONFIG.chains[selectedChain]?.name || "selected network"}{" "}
-              to complete this transaction.
+              Ensure you have sufficient USDC balance on {selectedChainInfo?.name || "selected network"} to complete
+              this transaction.
             </AlertDescription>
           </Alert>
 
