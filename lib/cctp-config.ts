@@ -76,3 +76,10 @@ export function getNetworkByChainId(chainId: number): NetworkConfig | undefined 
 export function getNetworkByName(name: CCTPNetwork): NetworkConfig {
   return CCTP_NETWORKS[name]
 }
+
+export const CCTP_CONFIG = {
+  chains: CCTP_NETWORKS,
+  supportedChains: SUPPORTED_CHAINS,
+  getNetworkByChainId,
+  getNetworkByName,
+} as const
