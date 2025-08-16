@@ -344,7 +344,7 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
       {availableChains.map((chain) => (
         <SelectItem key={chain.id} value={chain.id.toString()}>
           <div className="flex items-center gap-2">
-            <ArrowLeftRight className="w-4 h-4" />
+            <ArrowLeftRight className="w-1 h-1" />
             {chain.name}
           </div>
         </SelectItem>
