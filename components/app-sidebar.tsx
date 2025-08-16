@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Building2, TrendingUp, Landmark, PieChart, Settings, Home, LogOut } from "lucide-react"
+import { Building2, TrendingUp, Landmark, PieChart, Settings, Home, LogOut, ArrowLeftRight } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -22,6 +22,11 @@ const menuItems = [
     title: "Dashboard",
     url: "/app",
     icon: Home,
+  },
+  {
+    title: "CCTP Bridge", // Added CCTP Bridge menu item
+    url: "/app/cctp",
+    icon: ArrowLeftRight,
   },
   {
     title: "Estates",
