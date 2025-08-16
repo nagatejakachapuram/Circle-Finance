@@ -335,6 +335,7 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
   <Label htmlFor="chain-select" className="text-sm font-medium text-foreground">
     Payment Network
   </Label>
+
   <Select value={selectedChain} onValueChange={setSelectedChain}>
     <SelectTrigger className="bg-white border-slate-200 text-foreground">
       <SelectValue placeholder="Choose a payment network..." />
@@ -349,8 +350,6 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
         </SelectItem>
       ))}
     </SelectContent>
-  </Select>
-</div>
             </Select>
             <p className="text-xs text-muted-foreground">
               Choose the blockchain network to pay from. CCTP enables cross-chain USDC payments.
