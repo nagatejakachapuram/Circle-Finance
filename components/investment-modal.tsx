@@ -6,9 +6,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, CheckCircle, XCircle, Wallet } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Loader2, CheckCircle, XCircle, Wallet, ArrowLeftRight } from "lucide-react"
 import { useWallet } from "@/components/wallet-context"
-import { processInvestment, type CircleResponse } from "@/lib/circle-api"
+import type { CircleResponse } from "@/lib/circle-api"
+import { usePayment } from "@/hooks/use-payment"
+import { CCTP_CONFIG } from "@/lib/cctp-config"
 
 interface InvestmentModalProps {
   open: boolean
@@ -27,13 +30,23 @@ interface InvestmentModalProps {
 export function InvestmentModal({ open, onOpenChange, asset, investmentType, recipientAddress }: InvestmentModalProps) {
   const { address: walletAddress } = useWallet()
   const [tokenAmount, setTokenAmount] = useState(1)
+  const [selectedChain, setSelectedChain] = useState<number>(137) // Default to Polygon
   const [isProcessing, setIsProcessing] = useState(false)
   const [paymentResult, setPaymentResult] = useState<CircleResponse | null>(null)
   const [showResult, setShowResult] = useState(false)
   const [requiresSignature, setRequiresSignature] = useState(false)
 
+  const { createPaymentIntent, processPayment, estimateGas, checkBalance } = usePayment()
+
   const totalCost = tokenAmount * asset.price
   const expectedReturn = asset.apy ? (totalCost * asset.apy) / 100 : 0
+
+  // Get available chains for CCTP
+  const availableChains = Object.entries(CCTP_CONFIG.chains).map(([chainId, config]) => ({
+    id: Number(chainId),
+    name: config.name,
+    symbol: config.nativeSymbol,
+  }))
 
   const handleInvestment = async () => {
     if (!walletAddress) {
@@ -59,19 +72,37 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
     setRequiresSignature(true)
 
     try {
-      const result = await processInvestment(
-        investmentType,
-        asset.name,
-        tokenAmount,
-        asset.price,
-        walletAddress,
+      console.log("[v0] Creating payment intent for multi-chain investment...")
+
+      const paymentIntent = await createPaymentIntent({
+        amount: totalCost,
+        chainId: selectedChain,
         recipientAddress,
-      )
+        metadata: {
+          investmentType,
+          assetName: asset.name,
+          tokenAmount,
+        },
+      })
+
+      if (!paymentIntent.success) {
+        throw new Error(paymentIntent.error || "Failed to create payment intent")
+      }
+
+      console.log("[v0] Processing payment on chain:", selectedChain)
+
+      const result = await processPayment({
+        paymentIntentId: paymentIntent.data!.id,
+        chainId: selectedChain,
+        fromAddress: walletAddress,
+        toAddress: recipientAddress,
+        amount: totalCost,
+      })
 
       if (result.requiresWalletSignature && result.transactionData) {
-        console.log("[v0] Requesting MetaMask transaction approval...")
+        console.log("[v0] Requesting wallet transaction approval...")
 
-        // Request MetaMask to send the transaction
+        // Request wallet to send the transaction
         const txHash = await (window as any).ethereum.request({
           method: "eth_sendTransaction",
           params: [
@@ -95,6 +126,7 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
             recipientAddress,
             amount: totalCost,
             currency: "USDC",
+            chainId: selectedChain,
             timestamp: new Date().toISOString(),
           },
         })
@@ -114,9 +146,9 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
         }, 3000)
       }
     } catch (error: any) {
-      console.error("[v0] Transaction failed:", error)
+      console.error("[v0] Investment transaction failed:", error)
 
-      let errorMessage = "Payment failed. Please ensure you have sufficient USDC balance on Polygon Amoy network."
+      let errorMessage = `Payment failed. Please ensure you have sufficient USDC balance on ${CCTP_CONFIG.chains[selectedChain]?.name || "selected network"}.`
 
       if (error.code === 4001) {
         errorMessage = "Transaction was rejected by user."
@@ -171,7 +203,7 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
               </div>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm text-muted-foreground">Network</span>
-                <span className="font-medium">Polygon Amoy Testnet</span>
+                <span className="font-medium">{CCTP_CONFIG.chains[selectedChain]?.name || "Unknown"}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Tokens</span>
@@ -219,14 +251,14 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
                   <CheckCircle className="h-4 w-4 text-green-600" />
                   <AlertDescription className="text-green-800">
                     Your investment of {tokenAmount} tokens ({totalCost.toFixed(2)} USDC) in {asset.name} has been
-                    processed successfully!
+                    processed successfully on {CCTP_CONFIG.chains[selectedChain]?.name}!
                   </AlertDescription>
                 </Alert>
 
-                {paymentResult.data?.txHash && (
+                {(paymentResult.data?.txHash || paymentResult.txHash) && (
                   <div className="p-3 bg-slate-50 rounded-lg">
                     <p className="text-sm text-muted-foreground">Transaction Hash:</p>
-                    <p className="font-mono text-xs break-all">{paymentResult.data.txHash}</p>
+                    <p className="font-mono text-xs break-all">{paymentResult.data?.txHash || paymentResult.txHash}</p>
                   </div>
                 )}
               </div>
@@ -235,7 +267,7 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
                 <XCircle className="h-4 w-4 text-red-600" />
                 <AlertDescription className="text-red-800">
                   {paymentResult.error ||
-                    "Payment processing failed. Please ensure you have sufficient USDC balance on Polygon Amoy network."}
+                    `Payment processing failed. Please ensure you have sufficient USDC balance on ${CCTP_CONFIG.chains[selectedChain]?.name}.`}
                 </AlertDescription>
               </Alert>
             )}
@@ -288,6 +320,30 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="chain-select" className="text-sm font-medium text-foreground">
+              Payment Network
+            </Label>
+            <Select value={selectedChain.toString()} onValueChange={(value) => setSelectedChain(Number(value))}>
+              <SelectTrigger className="bg-white border-slate-200 text-foreground">
+                <SelectValue placeholder="Select network" />
+              </SelectTrigger>
+              <SelectContent className="bg-white text-foreground border-slate-200">
+                {availableChains.map((chain) => (
+                  <SelectItem key={chain.id} value={chain.id.toString()}>
+                    <div className="flex items-center gap-2">
+                      <ArrowLeftRight className="w-4 h-4" />
+                      {chain.name}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              Choose the blockchain network to pay from. CCTP enables cross-chain USDC payments.
+            </p>
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="token-amount" className="text-sm font-medium text-foreground">
               Number of Tokens
             </Label>
@@ -331,7 +387,8 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
           <Alert className="border-blue-200 bg-blue-50">
             <Wallet className="h-4 w-4 text-blue-600" />
             <AlertDescription className="text-blue-800">
-              Ensure you have sufficient USDC balance on Polygon Amoy testnet to complete this transaction.
+              Ensure you have sufficient USDC balance on {CCTP_CONFIG.chains[selectedChain]?.name || "selected network"}{" "}
+              to complete this transaction.
             </AlertDescription>
           </Alert>
 
