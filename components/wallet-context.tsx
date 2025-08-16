@@ -34,6 +34,48 @@ declare global {
   }
 }
 
+const detectMetaMask = async (): Promise<boolean> => {
+  if (typeof window === "undefined") return false
+
+  // Wait for page to fully load
+  if (document.readyState !== "complete") {
+    await new Promise((resolve) => {
+      if (document.readyState === "complete") {
+        resolve(void 0)
+      } else {
+        window.addEventListener("load", () => resolve(void 0), { once: true })
+      }
+    })
+  }
+
+  // Check for MetaMask specifically
+  if (window.ethereum) {
+    // Check if it's MetaMask specifically
+    if (window.ethereum.isMetaMask) {
+      console.log("[v0] MetaMask detected via isMetaMask flag")
+      return true
+    }
+
+    // Check for MetaMask in providers array (for when multiple wallets are installed)
+    if (window.ethereum.providers) {
+      const metaMaskProvider = window.ethereum.providers.find((provider: any) => provider.isMetaMask)
+      if (metaMaskProvider) {
+        console.log("[v0] MetaMask detected in providers array")
+        // Set the MetaMask provider as the main ethereum object
+        window.ethereum = metaMaskProvider
+        return true
+      }
+    }
+
+    // Fallback: if ethereum exists but no specific MetaMask detection
+    console.log("[v0] Generic ethereum provider detected")
+    return true
+  }
+
+  console.log("[v0] No ethereum provider detected")
+  return false
+}
+
 export function WalletProvider({ children }: { children?: React.ReactNode }) {
   const [address, setAddress] = useState<string | null>(null)
   const [isConnecting, setIsConnecting] = useState(false)
@@ -74,9 +116,9 @@ export function WalletProvider({ children }: { children?: React.ReactNode }) {
   }
 
   useEffect(() => {
-    // Check if wallet was previously connected
     const checkConnection = async () => {
-      if (typeof window !== "undefined" && window.ethereum) {
+      const hasMetaMask = await detectMetaMask()
+      if (hasMetaMask) {
         try {
           console.log("[v0] Checking existing wallet connection...")
           const accounts = await window.ethereum.request({ method: "eth_accounts" })
@@ -90,8 +132,6 @@ export function WalletProvider({ children }: { children?: React.ReactNode }) {
         } catch (error) {
           console.error("[v0] Error checking wallet connection:", error)
         }
-      } else {
-        console.log("[v0] MetaMask not detected")
       }
     }
 
@@ -130,7 +170,9 @@ export function WalletProvider({ children }: { children?: React.ReactNode }) {
 
     try {
       if (walletId === "metamask") {
-        if (typeof window === "undefined" || !window.ethereum) {
+        const hasMetaMask = await detectMetaMask()
+
+        if (!hasMetaMask) {
           console.log("[v0] MetaMask not found, opening download page")
           window.open("https://metamask.io/download/", "_blank")
           return
