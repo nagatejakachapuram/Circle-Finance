@@ -332,24 +332,23 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
           </div>
 
           <div className="space-y-2">
-  <Label htmlFor="chain-select" className="text-sm font-medium text-foreground">
-    Payment Network
-  </Label>
-
-  <Select value={selectedChain} onValueChange={setSelectedChain}>
-    <SelectTrigger className="bg-white border-slate-200 text-foreground">
-      <SelectValue placeholder="Choose a payment network..." />
-    </SelectTrigger>
-    <SelectContent className="bg-white text-foreground border-slate-200">
-      {availableChains.map((chain) => (
-        <SelectItem key={chain.id} value={chain.id.toString()}>
-          <div className="flex items-center gap-2">
-            <ArrowLeftRight className="w-1 h-1" />
-            {chain.name}
-          </div>
-        </SelectItem>
-      ))}
-    </SelectContent>
+            <Label htmlFor="chain-select" className="text-sm font-medium text-foreground">
+              Payment Network
+            </Label>
+            <Select value={selectedChain.toString()} onValueChange={handleChainChange}>
+              <SelectTrigger className="bg-white border-slate-200 text-foreground">
+                <SelectValue placeholder="Select network" />
+              </SelectTrigger>
+              <SelectContent className="bg-white text-foreground border-slate-200">
+                {availableChains.map((chain) => (
+                  <SelectItem key={chain.id} value={chain.id.toString()}>
+                    <div className="flex items-center gap-2">
+                      <ArrowLeftRight className="w-4 h-4" />
+                      {chain.name}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
             </Select>
             <p className="text-xs text-muted-foreground">
               Choose the blockchain network to pay from. CCTP enables cross-chain USDC payments.
