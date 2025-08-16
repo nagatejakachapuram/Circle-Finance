@@ -337,14 +337,7 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
             </Label>
             <Select value={selectedChain.toString()} onValueChange={handleChainChange}>
               <SelectTrigger className="bg-white border-slate-200 text-foreground">
-                <SelectValue placeholder="Select network">
-                  {selectedChainInfo && (
-                    <div className="flex items-center gap-2">
-                      <ArrowLeftRight className="w-4 h-4" />
-                      {selectedChainInfo.name}
-                    </div>
-                  )}
-                </SelectValue>
+                <SelectValue placeholder="Select network" />
               </SelectTrigger>
               <SelectContent className="bg-white text-foreground border-slate-200">
                 {availableChains.map((chain) => (
