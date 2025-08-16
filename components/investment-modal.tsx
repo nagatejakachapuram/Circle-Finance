@@ -335,8 +335,6 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
   <Label htmlFor="chain-select" className="text-sm font-medium text-foreground">
     Payment Network
   </Label>
-  
-  {/* Corrected logic: value is a string, and onValueChange directly sets the string state */}
   <Select value={selectedChain} onValueChange={setSelectedChain}>
     <SelectTrigger className="bg-white border-slate-200 text-foreground">
       <SelectValue placeholder="Choose a payment network..." />
