@@ -3,7 +3,7 @@ export const CCTP_NETWORKS = {
   ethereum: {
     chainId: 11155111,
     name: "Ethereum Sepolia",
-    rpcUrl: "https://eth-sepolia.g.alchemy.com/v2/your-api-key",
+    rpcUrl: process.env.INFURA_ETHEREUM_SEPOLIA_RPC_URL || "https://eth-sepolia.g.alchemy.com/v2/your-api-key",
     tokenMessenger: "0x9f3B8679c73C2Fef8b59B4f3444d4e156fb70AA5",
     messageTransmitter: "0x7865fAfC2db2093669d92c0F33AeEF291086BEFD",
     usdcAddress: "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
@@ -13,7 +13,7 @@ export const CCTP_NETWORKS = {
   base: {
     chainId: 84532,
     name: "Base Sepolia",
-    rpcUrl: "https://sepolia.base.org",
+    rpcUrl: process.env.INFURA_BASE_SEPOLIA_RPC_URL || "https://sepolia.base.org",
     tokenMessenger: "0x9f3B8679c73C2Fef8b59B4f3444d4e156fb70AA5",
     messageTransmitter: "0x7865fAfC2db2093669d92c0F33AeEF291086BEFD",
     usdcAddress: "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
@@ -23,7 +23,7 @@ export const CCTP_NETWORKS = {
   arbitrum: {
     chainId: 421614,
     name: "Arbitrum Sepolia",
-    rpcUrl: "https://sepolia-rollup.arbitrum.io/rpc",
+    rpcUrl: process.env.INFURA_ARBITRUM_SEPOLIA_RPC_URL || "https://sepolia-rollup.arbitrum.io/rpc",
     tokenMessenger: "0x9f3B8679c73C2Fef8b59B4f3444d4e156fb70AA5",
     messageTransmitter: "0x7865fAfC2db2093669d92c0F33AeEF291086BEFD",
     usdcAddress: "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
