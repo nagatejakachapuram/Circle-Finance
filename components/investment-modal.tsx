@@ -50,6 +50,16 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
 
   const selectedChainInfo = CCTP_CONFIG.chains[selectedChain]
 
+  console.log("[v0] Current selectedChain:", selectedChain)
+  console.log("[v0] selectedChainInfo:", selectedChainInfo)
+  console.log("[v0] availableChains:", availableChains)
+
+  const handleChainChange = (value: string) => {
+    const newChain = Number(value)
+    console.log("[v0] Network selection changed from", selectedChain, "to", newChain)
+    setSelectedChain(newChain)
+  }
+
   const handleInvestment = async () => {
     if (!walletAddress) {
       setPaymentResult({
@@ -325,9 +335,16 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
             <Label htmlFor="chain-select" className="text-sm font-medium text-foreground">
               Payment Network
             </Label>
-            <Select value={selectedChain.toString()} onValueChange={(value) => setSelectedChain(Number(value))}>
+            <Select value={selectedChain.toString()} onValueChange={handleChainChange}>
               <SelectTrigger className="bg-white border-slate-200 text-foreground">
-                <SelectValue placeholder="Select network" />
+                <SelectValue placeholder="Select network">
+                  {selectedChainInfo && (
+                    <div className="flex items-center gap-2">
+                      <ArrowLeftRight className="w-4 h-4" />
+                      {selectedChainInfo.name}
+                    </div>
+                  )}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="bg-white text-foreground border-slate-200">
                 {availableChains.map((chain) => (
