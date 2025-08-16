@@ -1,22 +1,27 @@
+// File: blockchain.js
+// This file contains the core logic for interacting with the blockchain contracts.
+// It's imported by server.js.
+
 "use server";
 
-import { ethers, Contract } from 'ethers'; // Import the 'Contract' type
-import { Address } from 'viem';
-import IdentityProxyABI from '../../../abi/@onchain-id/solidity/contracts/proxy/IdentityProxy.sol/IdentityProxy.json';
-import IdentityRegistry from '../../../abi/registry/IdentityRegistry.sol/IdentityRegistry.json';
+const { ethers, Contract } = require('ethers');
+const IdentityProxyABI = require('./abi/@onchain-id/solidity/contracts/proxy/IdentityProxy.sol/IdentityProxy.json');
+const IdentityRegistry = require('./abi/registry/IdentityRegistry.sol/IdentityRegistry.json');
 
 const IMPLEMENTATION_AUTHORITY = '0x22b1394F0b70513423747964B0A3352B1703Fffc';
 const IDENTITY_REGISTRY = '0x7Eb85534067f0E123c85e60aBD8AF00EF642c361';
 
-// This function now explicitly returns a Promise that resolves to a Contract object.
-export async function deployIdentityProxy(userAddress: Address): Promise<Contract> {
-    console.log("Deploying Identity Proxy...");
-    console.log("private key:", process.env.ADMIN_PRIVATE_KEY);
-    console.log("RPC URL:", process.env.RPC_URL);
+// Helper function to ensure environment variables are loaded
+function checkEnvVariables() {
     if (!process.env.ADMIN_PRIVATE_KEY || !process.env.RPC_URL) {
-        // Throw an error if environment variables are not set. This is safer.
         throw new Error("Missing required environment variables (ADMIN_PRIVATE_KEY or RPC_URL).");
     }
+}
+
+// Deploys a new IdentityProxy contract for a user.
+async function deployIdentityProxy(userAddress) {
+    console.log("Deploying Identity Proxy...");
+    checkEnvVariables();
     
     try {
         const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URL);
@@ -29,7 +34,7 @@ export async function deployIdentityProxy(userAddress: Address): Promise<Contrac
         const identity = await factory.deploy(IMPLEMENTATION_AUTHORITY, userAddress);
         await identity.deployed();
         console.log(`Identity Proxy deployed at: ${identity.address}`);
-        return identity; // Return the contract object directly.
+        return identity; // Return the full contract object
 
     } catch (error) {
         console.error("🔴 [ERROR] An error occurred during Identity Proxy deployment:", error);
@@ -37,10 +42,10 @@ export async function deployIdentityProxy(userAddress: Address): Promise<Contrac
     }
 }
 
-export const identityProxy = async (userAddress: Address) => {
+// A wrapper function that calls deployIdentityProxy and returns the address.
+async function identityProxy(userAddress) {
     console.log("Deploying Identity for user:", userAddress);
     try {
-        // The destructuring is no longer needed since we return the contract directly.
         const identityContract = await deployIdentityProxy(userAddress);
         console.log("✅ Identity Proxy deployed successfully.");
         return identityContract.address;
@@ -51,26 +56,26 @@ export const identityProxy = async (userAddress: Address) => {
     }
 }
 
-// Add the 'Contract' type to the 'identity' parameter.
-export async function registerIdentity(identity: Contract, userAddress: Address, countryCode: string) {
-    console.log("Registering identity for user:", userAddress);
+// Registers the newly created identity in the main registry.
+// MODIFIED: This function now accepts the identity's address instead of the full contract object.
+async function registerIdentity(identityAddress, userAddress, countryCode) {
+    console.log(`Registering identity at ${identityAddress} for user: ${userAddress}`);
+    checkEnvVariables();
+
     try {
-        if (!process.env.ADMIN_PRIVATE_KEY || !process.env.RPC_URL) {
-            throw new Error("Missing required environment variables.");
-        }
-         const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URL);
+        const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URL);
         const adminWallet = new ethers.Wallet(process.env.ADMIN_PRIVATE_KEY, provider);
         const identityRegistry = new ethers.Contract(IDENTITY_REGISTRY, IdentityRegistry.abi, adminWallet);
 
-        const userIdentity = await identityRegistry.registerIdentity(
+        const txResponse = await identityRegistry.registerIdentity(
             userAddress,
-            identity.address, // Now TypeScript knows 'identity' has an 'address' property.
+            identityAddress,
             countryCode
         );
 
-        const tx = await userIdentity.wait();
-        console.log(`✅ User identity registered with transaction: ${userIdentity.hash}`);
-        return tx.hash;
+        const txReceipt = await txResponse.wait();
+        console.log(`✅ User identity registered with transaction: ${txReceipt.transactionHash}`);
+        return txReceipt.transactionHash;
 
     } catch (error) {
         console.error(`🔴 [ERROR] Failed to register identity for ${userAddress}:`, error);
@@ -78,18 +83,26 @@ export async function registerIdentity(identity: Contract, userAddress: Address,
     }
 }
 
-export const identityStatus = async (userAddress: Address) => {
+// Checks if a user is verified in the identity registry.
+async function identityStatus(userAddress) {
     console.log(`Checking identity status for ${userAddress}...`);
+    checkEnvVariables();
     try {
         const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URL);
         const identityRegistry = new ethers.Contract(IDENTITY_REGISTRY, IdentityRegistry.abi, provider);
-        const identityStatusVariable = await identityRegistry.isVerified(userAddress);
+        const isVerified = await identityRegistry.isVerified(userAddress);
         
-        console.log(`Identity status for ${userAddress}: ${identityStatusVariable}`);
-        return identityStatusVariable;
+        console.log(`Identity status for ${userAddress}: ${isVerified}`);
+        return isVerified;
 
     } catch (error) {
         console.error(`🔴 [ERROR] Failed to retrieve identity status for ${userAddress}:`, error);
         throw error;
     }
 }
+
+module.exports = {
+    identityProxy,
+    registerIdentity,
+    identityStatus
+};
