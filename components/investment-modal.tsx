@@ -104,7 +104,7 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
       console.log("[v0] Processing payment on chain:", selectedChain)
 
       const result = await processPayment({
-        paymentIntentId: paymentIntent.data!.id,
+        paymentIntentId: paymentIntent.paymentIntent!.id,
         chainId: selectedChain,
         fromAddress: walletAddress,
         toAddress: recipientAddress,
@@ -114,8 +114,8 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
       if (result.requiresWalletSignature && result.transactionData) {
         console.log("[v0] Requesting wallet transaction approval...")
 
-        // Request wallet to send the transaction
-        const txHash = await (window as any).ethereum.request({
+        // First approve USDC spending
+        const approvalTxHash = await (window as any).ethereum.request({
           method: "eth_sendTransaction",
           params: [
             {
@@ -128,11 +128,40 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
           ],
         })
 
-        console.log("[v0] Transaction approved by user:", txHash)
+        console.log("[v0] Approval transaction approved by user:", approvalTxHash)
+
+        // Wait for approval confirmation
+        await new Promise(resolve => setTimeout(resolve, 2000))
+
+        // Now process the actual transfer
+        const transferResult = await processPayment({
+          paymentIntentId: paymentIntent.paymentIntent!.id,
+          chainId: selectedChain,
+          fromAddress: walletAddress,
+          toAddress: recipientAddress,
+          amount: totalCost,
+        })
+
+        if (transferResult.requiresWalletSignature && transferResult.transactionData) {
+          const transferTxHash = await (window as any).ethereum.request({
+            method: "eth_sendTransaction",
+            params: [
+              {
+                from: walletAddress,
+                to: transferResult.transactionData.to,
+                data: transferResult.transactionData.data,
+                value: transferResult.transactionData.value,
+                gas: transferResult.transactionData.gasLimit,
+              },
+            ],
+          })
+
+          console.log("[v0] Transfer transaction approved by user:", transferTxHash)
+
 
         setPaymentResult({
           success: true,
-          txHash: txHash,
+            txHash: transferTxHash,
           data: {
             walletId: walletAddress,
             recipientAddress,
@@ -142,6 +171,9 @@ export function InvestmentModal({ open, onOpenChange, asset, investmentType, rec
             timestamp: new Date().toISOString(),
           },
         })
+        } else {
+          setPaymentResult(transferResult)
+        }
       } else {
         setPaymentResult(result)
       }
