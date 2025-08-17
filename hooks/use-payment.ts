@@ -1,73 +1,96 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import { paymentProcessor, type PaymentRequest, type PaymentResult } from "@/lib/payment-processor"
+import type { PaymentRequest, PaymentResult } from "@/lib/payment-processor"
 
 export function usePayment() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const createPaymentIntent = useCallback(async (request: PaymentRequest): Promise<PaymentResult> => {
+  const createPaymentIntent = useCallback(async (request: PaymentRequest): Promise<PaymentResult | null> => {
     setIsLoading(true)
     setError(null)
 
     try {
-      return await paymentProcessor.createPaymentIntent(request)
+      const response = await fetch("/api/payments/intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(request),
+      })
+
+      const data = await response.json()
+
+      if (!data.success) {
+        setError(data.error)
+        return null
+      }
+
+      return {
+        success: true,
+        paymentIntent: data.paymentIntent,
+        order: data.order,
+        estimatedGas: data.estimatedGas ? BigInt(data.estimatedGas) : undefined,
+        networkFee: data.networkFee,
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to create payment intent"
       setError(errorMessage)
-      return { success: false, error: errorMessage }
+      return null
     } finally {
       setIsLoading(false)
     }
   }, [])
 
-  const processPayment = useCallback(async (data: {
-    paymentIntentId: string
-    chainId: number
-    fromAddress: string
-    toAddress: string
-    amount: number
-  }): Promise<PaymentResult> => {
+  const processPayment = useCallback(async (paymentIntentId: string, txHash: string): Promise<boolean> => {
     setIsLoading(true)
     setError(null)
 
     try {
-      return await paymentProcessor.processPayment(data)
+      const response = await fetch("/api/payments/process", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ paymentIntentId, txHash }),
+      })
+
+      const data = await response.json()
+
+      if (!data.success) {
+        setError(data.error)
+        return false
+      }
+
+      return true
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to process payment"
       setError(errorMessage)
-      return { success: false, error: errorMessage }
+      return false
     } finally {
       setIsLoading(false)
     }
   }, [])
 
-  const estimateGas = useCallback(async (request: PaymentRequest, userAddress: string): Promise<bigint> => {
+  const getPaymentStatus = useCallback(async (paymentIntentId: string): Promise<string | null> => {
     try {
-      return await paymentProcessor.estimateGas(request, userAddress)
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to estimate gas"
-      setError(errorMessage)
-      return BigInt(90000) // Fallback gas estimate
-    }
-  }, [])
+      const response = await fetch(`/api/payments/status/${paymentIntentId}`)
+      const data = await response.json()
 
-  const checkBalance = useCallback(async (chainId: number, userAddress: string): Promise<string> => {
-    try {
-      return await paymentProcessor.checkBalance(chainId, userAddress)
+      if (!data.success) {
+        setError(data.error)
+        return null
+      }
+
+      return data.status
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to check balance"
+      const errorMessage = err instanceof Error ? err.message : "Failed to get payment status"
       setError(errorMessage)
-      return "0"
+      return null
     }
   }, [])
 
   return {
     createPaymentIntent,
     processPayment,
-    estimateGas,
-    checkBalance,
+    getPaymentStatus,
     isLoading,
     error,
   }
