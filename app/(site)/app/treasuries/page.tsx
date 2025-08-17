@@ -282,7 +282,7 @@ export default function TreasuriesPage() {
                     <div className="flex items-center gap-3 mt-auto">
                       <Button
                         size="sm"
-                        className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95"
+                        className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95 min-h-[44px] px-4 text-sm font-medium"
                         onClick={() => handleInvestNow(treasury)}
                         disabled={!treasury.available}
                       >
@@ -291,7 +291,7 @@ export default function TreasuriesPage() {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="border-slate-200 text-foreground hover:bg-slate-100 bg-transparent"
+                        className="border-slate-200 text-foreground hover:bg-slate-100 bg-transparent min-h-[44px] px-4 text-sm font-medium"
                         onClick={() => handleViewDetails(treasury)}
                       >
                         View Details

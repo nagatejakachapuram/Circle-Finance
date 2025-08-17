@@ -236,7 +236,7 @@ export default function IndexFundsPage() {
                 <div className="flex items-center gap-3">
                   <Button
                     size="sm"
-                    className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95"
+                    className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95 min-h-[44px] px-4 text-sm font-medium"
                     onClick={() => handleInvestNow(fund)}
                     disabled={!fund.available}
                   >
@@ -245,7 +245,7 @@ export default function IndexFundsPage() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="border-slate-200 text-foreground hover:bg-slate-100 bg-transparent"
+                    className="border-slate-200 text-foreground hover:bg-slate-100 bg-transparent min-h-[44px] px-4 text-sm font-medium"
                     onClick={() => handleViewDetails(fund)}
                   >
                     View Details
