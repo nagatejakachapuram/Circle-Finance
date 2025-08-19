@@ -12,7 +12,7 @@ const items = [
   },
   {
     title: "USDC-Native",
-    desc: "Stable, fast settlements and distributions via Circle CCTP on supported chains.",
+    desc: "Stable, fast settlements and distributions via Circle CCTP V2 on supported chains.",
     icon: Coins,
   },
   {
@@ -33,7 +33,7 @@ export default function Features() {
       <div className="container px-4 md:px-6">
         <FadeIn>
           <h2 id="features" className="text-2xl md:text-3xl font-semibold tracking-tight text-foreground">
-            {"Why Circle Pay"}
+            {"Why CircleX Finance"}
           </h2>
         </FadeIn>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

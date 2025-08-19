@@ -6,21 +6,19 @@ import { GlassCard } from "./glass-card"
 const testimonials = [
   {
     quote:
-      "Circle Pay sets the standard for compliant tokenization. Our investors love the clarity and USDC distributions.",
+      "CircleX Finance sets the standard for compliant tokenization. Our investors love the clarity and USDC distributions.",
     author: "Alex M.",
     role: "Fund Manager",
     initials: "AM",
   },
   {
-    quote:
-      "The on-chain records are a dream for audits. We shipped a product that looks premium and works reliably.",
+    quote: "The on-chain records are a dream for audits. We shipped a product that looks premium and works reliably.",
     author: "Priya K.",
     role: "Product Lead",
     initials: "PK",
   },
   {
-    quote:
-      "Connecting investors to real estate on-chain with KYC controls is exactly what our compliance team needed.",
+    quote: "Connecting investors to real estate on-chain with KYC controls is exactly what our compliance team needed.",
     author: "Diego R.",
     role: "Compliance Officer",
     initials: "DR",
@@ -40,7 +38,11 @@ export default function Testimonials() {
           {testimonials.map((t, i) => (
             <FadeIn key={t.author} delay={i * 0.05}>
               <GlassCard>
-                <p className="text-foreground/90">{"“"}{t.quote}{"”"}</p>
+                <p className="text-foreground/90">
+                  {"“"}
+                  {t.quote}
+                  {"”"}
+                </p>
                 <div className="mt-4 flex items-center gap-3">
                   <div className="relative inline-grid place-items-center h-9 w-9 rounded-full text-sm font-medium text-foreground">
                     <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#3A86FF] to-[#8ab6ff] opacity-40 blur-sm" />

@@ -101,6 +101,7 @@ class CircleAPI {
       }
     }
   }
+<<<<<<< HEAD
 
   async getHealth(): Promise<CircleResponse> {
     try {
@@ -114,6 +115,8 @@ class CircleAPI {
       }
     }
   }
+=======
+>>>>>>> CCTP
 }
 
 export const circleAPI = new CircleAPI()

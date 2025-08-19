@@ -2,35 +2,59 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+<<<<<<< HEAD
 import { Shield, Wallet, Building2, Banknote } from 'lucide-react'
+=======
+import { Shield, Wallet, Building2, Banknote } from "lucide-react"
+>>>>>>> CCTP
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { FadeIn } from "@/components/motion"
 import { GlassCard } from "@/components/glass-card"
+<<<<<<< HEAD
+=======
+import AuroraBg from "@/components/aurora-bg"
+>>>>>>> CCTP
 
 const steps = [
   {
     title: "Connect Wallet",
+<<<<<<< HEAD
     description:
       "Authenticate using your self-custodied wallet. Non-custodial by design for maximum control.",
+=======
+    description: "Authenticate using your self-custodied wallet. Non-custodial by design for maximum control.",
+>>>>>>> CCTP
     icon: Wallet,
   },
   {
     title: "KYC & Onboarding",
+<<<<<<< HEAD
     description:
       "Verify your identity in minutes. We guide you with clear status and feedback.",
+=======
+    description: "Verify your identity in minutes. We guide you with clear status and feedback.",
+>>>>>>> CCTP
     icon: Shield,
   },
   {
     title: "Invest On-Chain",
+<<<<<<< HEAD
     description:
       "Access tokenized real estate via ERC‑3643. Transactions settle fully on-chain.",
+=======
+    description: "Access tokenized real estate via ERC‑3643. Transactions settle fully on-chain.",
+>>>>>>> CCTP
     icon: Building2,
   },
   {
     title: "Earn Rent in USDC",
+<<<<<<< HEAD
     description:
       "Receive programmatic rent distributions in USDC via supported networks with CCTP.",
+=======
+    description: "Receive programmatic rent distributions in USDC via supported networks with CCTP V2.",
+>>>>>>> CCTP
     icon: Banknote,
   },
 ]
@@ -40,11 +64,18 @@ export default function HowItWorksPage() {
     <div className="min-h-dvh bg-white relative overflow-hidden">
       <Header />
       <main className="container px-4 md:px-6 py-12 md:py-20 relative">
+<<<<<<< HEAD
         <div className="max-w-3xl">
           <FadeIn>
             <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground">
               {"How it works"}
             </h1>
+=======
+        <AuroraBg intensity={0.6} />
+        <div className="max-w-3xl">
+          <FadeIn>
+            <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground">{"How it works"}</h1>
+>>>>>>> CCTP
           </FadeIn>
           <FadeIn delay={0.05}>
             <p className="text-muted-foreground mt-3">
@@ -71,7 +102,15 @@ export default function HowItWorksPage() {
           <Button asChild className="bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white hover:opacity-95">
             <Link href="/get-started">{"Start KYC"}</Link>
           </Button>
+<<<<<<< HEAD
           <Button asChild variant="outline" className="border-slate-200 text-foreground hover:bg-slate-100">
+=======
+          <Button
+            asChild
+            variant="outline"
+            className="border-slate-200 text-foreground hover:bg-slate-100 bg-transparent"
+          >
+>>>>>>> CCTP
             <Link href="/explore">{"Explore Estates"}</Link>
           </Button>
         </div>

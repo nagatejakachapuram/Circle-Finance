@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 "use client"
+=======
+>>>>>>> CCTP
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowRight, CheckCircle2, Shield, Wallet, Building2 } from "lucide-react"
@@ -12,6 +15,10 @@ import Testimonials from "@/components/testimonials"
 import FinalCta from "@/components/final-cta"
 import { GlassCard } from "@/components/glass-card"
 import { FadeIn } from "@/components/motion"
+<<<<<<< HEAD
+=======
+import AuroraBg from "@/components/aurora-bg"
+>>>>>>> CCTP
 
 export default function Page() {
   return (
@@ -26,6 +33,10 @@ export default function Page() {
               "radial-gradient(1200px 800px at 50% 0%, rgba(58,134,255,0.08), transparent 60%), radial-gradient(900px 600px at 100% 0%, rgba(58,134,255,0.12), transparent 60%), #ffffff",
           }}
         />
+<<<<<<< HEAD
+=======
+        <AuroraBg intensity={1.15} />
+>>>>>>> CCTP
         <Suspense fallback={null}>
           <Hero />
         </Suspense>
@@ -37,7 +48,11 @@ export default function Page() {
             <div className="flex items-center justify-between gap-4">
               <div>
                 <h2 id="how-it-works" className="text-2xl md:text-3xl font-semibold tracking-tight text-foreground">
+<<<<<<< HEAD
                   {"How Circle Pay Works"}
+=======
+                  {"How CircleX Finance Works"}
+>>>>>>> CCTP
                 </h2>
                 <p className="text-muted-foreground mt-2 max-w-3xl">
                   {"Connect your wallet, complete fast KYC, invest in tokenized properties, and earn rent in USDC."}

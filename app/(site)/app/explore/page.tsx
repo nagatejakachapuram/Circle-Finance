@@ -121,6 +121,10 @@ export default function AppExplorePage() {
   const [sort, setSort] = useState<string>("apy_desc")
   const [selectedProperty, setSelectedProperty] = useState<Estate | null>(null)
   const [showDetailsModal, setShowDetailsModal] = useState(false)
+<<<<<<< HEAD
+=======
+  const [showInvestmentModal, setShowInvestmentModal] = useState(false)
+>>>>>>> CCTP
   const [investmentAmount, setInvestmentAmount] = useState(1)
 
   const filtered = useMemo(() => {
@@ -145,7 +149,11 @@ export default function AppExplorePage() {
 
   const handleInvestNow = (property: Estate) => {
     setSelectedProperty(property)
+<<<<<<< HEAD
     setShowDetailsModal(false)
+=======
+    setShowInvestmentModal(true)
+>>>>>>> CCTP
   }
 
   return (
@@ -364,8 +372,13 @@ export default function AppExplorePage() {
       </Dialog>
 
       <InvestmentModal
+<<<<<<< HEAD
         open={showDetailsModal}
         onOpenChange={setShowDetailsModal}
+=======
+        open={showInvestmentModal}
+        onOpenChange={setShowInvestmentModal}
+>>>>>>> CCTP
         asset={selectedProperty || ESTATES[0]}
         investmentType="estate"
         recipientAddress="0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b6" // Replace with your treasury address

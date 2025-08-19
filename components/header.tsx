@@ -25,9 +25,9 @@ export default function Header() {
       <ScrollProgress />
       <header className="sticky top-0 z-40 w-full border-b border-slate-200/80 bg-white/70 backdrop-blur-xl">
         <div className="container px-4 md:px-6 h-16 flex items-center justify-between">
-          <Link href="/" aria-label="Circle Pay home" className="inline-flex items-center gap-2">
+          <Link href="/" aria-label="CircleX Finance home" className="inline-flex items-center gap-2">
             <div className="h-8 w-8 rounded-full ring-2 ring-slate-200/80 bg-[conic-gradient(from_180deg_at_50%_50%,#3A86FF_0%,#8ab6ff_40%,#3A86FF_100%)]" />
-            <span className="font-semibold tracking-tight text-foreground">{"Circle Pay"}</span>
+            <span className="font-semibold tracking-tight text-foreground">{"CircleX Finance"}</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-1 rounded-full border border-slate-200/80 bg-white/70 backdrop-blur-xl px-1 py-1">
@@ -86,7 +86,7 @@ export default function Header() {
               </SheetTrigger>
               <SheetContent className="bg-white text-foreground border-slate-200">
                 <SheetHeader>
-                  <SheetTitle>{"Circle Pay"}</SheetTitle>
+                  <SheetTitle>{"CircleX Finance"}</SheetTitle>
                 </SheetHeader>
                 <div className="mt-6 flex flex-col gap-2">
                   {nav.map((item) => (

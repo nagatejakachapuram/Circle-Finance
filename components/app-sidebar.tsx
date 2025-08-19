@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Building2, TrendingUp, Landmark, PieChart, Settings, Home, LogOut, Fingerprint, Loader2, AlertTriangle } from "lucide-react"
+import { Building2, TrendingUp, Landmark, PieChart, Settings, Home, LogOut, ArrowLeftRight, Loader2, Fingerprint, AlertTriangle } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -25,6 +25,11 @@ const menuItems = [
     title: "Dashboard",
     url: "/app",
     icon: Home,
+  },
+  {
+    title: "CCTP V2 Bridge",
+    url: "/app/cctp",
+    icon: ArrowLeftRight,
   },
   {
     title: "Estates",
@@ -103,7 +108,7 @@ export function AppSidebar() {
           className="flex items-center gap-2 px-4 py-2 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer"
         >
           <div className="h-8 w-8 rounded-full ring-2 ring-slate-200/80 bg-[conic-gradient(from_180deg_at_50%_50%,#3A86FF_0%,#8ab6ff_40%,#3A86FF_100%)]" />
-          <span className="font-semibold tracking-tight text-foreground">Circle Pay</span>
+          <span className="font-semibold tracking-tight text-foreground">CircleX Finance</span>
         </Link>
       </SidebarHeader>
       <SidebarContent>

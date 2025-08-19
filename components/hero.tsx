@@ -72,7 +72,7 @@ export default function Hero() {
               transition={{ duration: 0.5 }}
               className="inline-flex items-center gap-2 rounded-full border border-slate-200/80 bg-white/70 backdrop-blur px-3 py-1 text-xs text-muted-foreground"
             >
-              {"USDC-Native • ERC-3643 • CCTP"}
+              {"USDC-Native • ERC-3643 • CCTP V2"}
             </motion.div>
 
             <motion.h1
@@ -93,7 +93,7 @@ export default function Hero() {
               className="mt-5 text-muted-foreground text-lg max-w-xl"
             >
               {
-                "Circle Pay brings real-world property to the blockchain with compliance-first rails. Invest transparently and earn rent in USDC."
+                "CircleX Finance brings real-world property to the blockchain with compliance-first rails. Invest transparently and earn rent in USDC."
               }
             </motion.p>
 

@@ -1,7 +1,11 @@
 "use client"
 
 import { useState, useEffect } from "react"
+<<<<<<< HEAD
 import { CheckCircle2, Wallet, User, Shield, Plus, ChevronRight, Building, TrendingUp, Landmark, Loader2 } from "lucide-react"
+=======
+import { CheckCircle2, Wallet, User, Shield, Plus, ChevronRight, Building, TrendingUp, Landmark } from "lucide-react"
+>>>>>>> CCTP
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Progress } from "@/components/ui/progress"
@@ -11,6 +15,7 @@ import { FadeIn } from "@/components/motion"
 import { useIsMobile } from "@/components/ui/use-mobile"
 import Link from "next/link"
 
+<<<<<<< HEAD
 // Define the base URL for your Express server
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
@@ -35,10 +40,39 @@ const countries = Object.keys(countryMap);
 
 export default function AppPage() {
   const { connected, connect, address, isConnecting } = useWallet()
+=======
+type KYCStep = "wallet" | "onchain-id" | "kyc-verification" | "add-claim" | "complete"
+
+interface KYCData {
+  currentStep: KYCStep
+  selectedCountry: string
+  onchainIdDeployed: boolean
+  kycSignature: string
+  claimAdded: boolean
+  walletAddress: string
+}
+
+const countries = [
+  "United States",
+  "United Kingdom",
+  "Canada",
+  "Australia",
+  "Germany",
+  "France",
+  "Japan",
+  "Singapore",
+  "Switzerland",
+  "Netherlands",
+]
+
+export default function AppPage() {
+  const { connected, connect, connectWallet, address, isConnecting, showWalletModal, setShowWalletModal } = useWallet()
+>>>>>>> CCTP
   const isMobile = useIsMobile()
   const [currentStep, setCurrentStep] = useState<KYCStep>("wallet")
   const [selectedCountry, setSelectedCountry] = useState<string>("")
   const [onchainIdDeployed, setOnchainIdDeployed] = useState(false)
+<<<<<<< HEAD
   const [identityAddress, setIdentityAddress] = useState<string>("") // Store the deployed contract address
   const [kycSignature, setKycSignature] = useState<string>("")
   const [claimAdded, setClaimAdded] = useState(false)
@@ -89,6 +123,16 @@ export default function AppPage() {
     }
   }, [connected, address]); // Rerun when connection status or address changes.
   // --- CHANGE END ---
+=======
+  const [kycSignature, setKycSignature] = useState<string>("")
+  const [claimAdded, setClaimAdded] = useState(false)
+
+  useEffect(() => {
+    if (connected && currentStep === "wallet") {
+      setCurrentStep("onchain-id")
+    }
+  }, [connected, currentStep])
+>>>>>>> CCTP
 
   const getStepStatus = (step: KYCStep) => {
     const stepOrder: KYCStep[] = ["wallet", "onchain-id", "kyc-verification", "add-claim", "complete"]
@@ -107,6 +151,7 @@ export default function AppPage() {
   }
 
   const handleDeployIdentity = async () => {
+<<<<<<< HEAD
     if (!address) {
       console.error("Wallet address is not available.");
       return;
@@ -135,17 +180,27 @@ export default function AppPage() {
     } finally {
       setIsDeploying(false);
     }
+=======
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+    setOnchainIdDeployed(true)
+    setCurrentStep("kyc-verification")
+>>>>>>> CCTP
   }
 
   const handleGetKYCSignature = async () => {
     if (!selectedCountry) return
+<<<<<<< HEAD
     // This remains a mock as per the original code.
     await new Promise((resolve) => setTimeout(resolve, 1500))
+=======
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+>>>>>>> CCTP
     const mockSignature = `0x${Math.random().toString(16).substr(2, 64)}`
     setKycSignature(mockSignature)
     setCurrentStep("add-claim")
   }
 
+<<<<<<< HEAD
   const handleRegisterIdentity = async () => {
     const numericCountryCode = countryMap[selectedCountry];
     if (!address || !identityAddress || !numericCountryCode) {
@@ -195,6 +250,14 @@ export default function AppPage() {
   }
   // --- CHANGE END ---
 
+=======
+  const handleAddClaim = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+    setClaimAdded(true)
+    setCurrentStep("complete")
+  }
+
+>>>>>>> CCTP
   return (
     <div className="flex-1 space-y-6 p-6">
       <div
@@ -230,12 +293,21 @@ export default function AppPage() {
           <GlassCard className="p-4 md:p-6">
             <div className="flex items-start gap-3 md:gap-4">
               <div
+<<<<<<< HEAD
                 className={`p-2 md:p-3 rounded-full ${getStepStatus("wallet") === "complete"
+=======
+                className={`p-2 md:p-3 rounded-full ${
+                  getStepStatus("wallet") === "complete"
+>>>>>>> CCTP
                     ? "bg-green-100 text-green-600"
                     : getStepStatus("wallet") === "in-progress"
                       ? "bg-blue-100 text-blue-600"
                       : "bg-slate-100 text-slate-400"
+<<<<<<< HEAD
                   }`}
+=======
+                }`}
+>>>>>>> CCTP
               >
                 {getStepStatus("wallet") === "complete" ? (
                   <CheckCircle2 className="size-5 md:size-6" />
@@ -246,6 +318,24 @@ export default function AppPage() {
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
                   <h3 className="text-base md:text-lg font-medium text-foreground">Connect Wallet</h3>
+<<<<<<< HEAD
+=======
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      getStepStatus("wallet") === "complete"
+                        ? "bg-green-100 text-green-700"
+                        : getStepStatus("wallet") === "in-progress"
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-slate-100 text-slate-600"
+                    }`}
+                  >
+                    {getStepStatus("wallet") === "complete"
+                      ? "Complete"
+                      : getStepStatus("wallet") === "in-progress"
+                        ? "In Progress"
+                        : "Pending"}
+                  </span>
+>>>>>>> CCTP
                 </div>
                 <p className="text-muted-foreground mb-4 text-sm md:text-base">
                   {connected ? "Wallet connected successfully" : "Please connect your wallet to continue"}
@@ -274,12 +364,21 @@ export default function AppPage() {
           <GlassCard className="p-4 md:p-6">
             <div className="flex items-start gap-3 md:gap-4">
               <div
+<<<<<<< HEAD
                 className={`p-2 md:p-3 rounded-full ${getStepStatus("onchain-id") === "complete"
+=======
+                className={`p-2 md:p-3 rounded-full ${
+                  getStepStatus("onchain-id") === "complete"
+>>>>>>> CCTP
                     ? "bg-green-100 text-green-600"
                     : getStepStatus("onchain-id") === "in-progress"
                       ? "bg-blue-100 text-blue-600"
                       : "bg-slate-100 text-slate-400"
+<<<<<<< HEAD
                   }`}
+=======
+                }`}
+>>>>>>> CCTP
               >
                 {getStepStatus("onchain-id") === "complete" ? (
                   <CheckCircle2 className="size-5 md:size-6" />
@@ -290,6 +389,24 @@ export default function AppPage() {
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
                   <h3 className="text-base md:text-lg font-medium text-foreground">Create OnchainID</h3>
+<<<<<<< HEAD
+=======
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      getStepStatus("onchain-id") === "complete"
+                        ? "bg-green-100 text-green-700"
+                        : getStepStatus("onchain-id") === "in-progress"
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-slate-100 text-slate-600"
+                    }`}
+                  >
+                    {getStepStatus("onchain-id") === "complete"
+                      ? "Complete"
+                      : getStepStatus("onchain-id") === "in-progress"
+                        ? "In Progress"
+                        : "Pending"}
+                  </span>
+>>>>>>> CCTP
                 </div>
                 <p className="text-muted-foreground mb-4 text-sm md:text-base">
                   Deploy your onchain identity contract to store verified claims
@@ -297,6 +414,7 @@ export default function AppPage() {
                 {getStepStatus("onchain-id") === "in-progress" && !onchainIdDeployed && (
                   <Button
                     onClick={handleDeployIdentity}
+<<<<<<< HEAD
                     disabled={isDeploying}
                     className={`bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white ${isMobile ? "h-12 px-6" : ""}`}
                   >
@@ -304,6 +422,14 @@ export default function AppPage() {
                   </Button>
                 )}
                 {onchainIdDeployed && <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg"><p className="text-sm text-green-700 font-medium">Identity Deployed</p><p className="text-xs text-green-600 font-mono mt-1 break-all">{identityAddress}</p></div>}
+=======
+                    className={`bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white ${isMobile ? "h-12 px-6" : ""}`}
+                  >
+                    Deploy Identity
+                    <ChevronRight className="ml-2 size-4" />
+                  </Button>
+                )}
+>>>>>>> CCTP
               </div>
             </div>
           </GlassCard>
@@ -313,12 +439,21 @@ export default function AppPage() {
           <GlassCard className="p-4 md:p-6">
             <div className="flex items-start gap-3 md:gap-4">
               <div
+<<<<<<< HEAD
                 className={`p-2 md:p-3 rounded-full ${getStepStatus("kyc-verification") === "complete"
+=======
+                className={`p-2 md:p-3 rounded-full ${
+                  getStepStatus("kyc-verification") === "complete"
+>>>>>>> CCTP
                     ? "bg-green-100 text-green-600"
                     : getStepStatus("kyc-verification") === "in-progress"
                       ? "bg-blue-100 text-blue-600"
                       : "bg-slate-100 text-slate-400"
+<<<<<<< HEAD
                   }`}
+=======
+                }`}
+>>>>>>> CCTP
               >
                 {getStepStatus("kyc-verification") === "complete" ? (
                   <CheckCircle2 className="size-5 md:size-6" />
@@ -329,6 +464,24 @@ export default function AppPage() {
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
                   <h3 className="text-base md:text-lg font-medium text-foreground">KYC Verification</h3>
+<<<<<<< HEAD
+=======
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      getStepStatus("kyc-verification") === "complete"
+                        ? "bg-green-100 text-green-700"
+                        : getStepStatus("kyc-verification") === "in-progress"
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-slate-100 text-slate-600"
+                    }`}
+                  >
+                    {getStepStatus("kyc-verification") === "complete"
+                      ? "Complete"
+                      : getStepStatus("kyc-verification") === "in-progress"
+                        ? "In Progress"
+                        : "Pending"}
+                  </span>
+>>>>>>> CCTP
                 </div>
                 <p className="text-muted-foreground mb-4 text-sm md:text-base">
                   Complete KYC verification and get your cryptographic signature
@@ -375,12 +528,21 @@ export default function AppPage() {
           <GlassCard className="p-4 md:p-6">
             <div className="flex items-start gap-3 md:gap-4">
               <div
+<<<<<<< HEAD
                 className={`p-2 md:p-3 rounded-full ${getStepStatus("add-claim") === "complete"
+=======
+                className={`p-2 md:p-3 rounded-full ${
+                  getStepStatus("add-claim") === "complete"
+>>>>>>> CCTP
                     ? "bg-green-100 text-green-600"
                     : getStepStatus("add-claim") === "in-progress"
                       ? "bg-blue-100 text-blue-600"
                       : "bg-slate-100 text-slate-400"
+<<<<<<< HEAD
                   }`}
+=======
+                }`}
+>>>>>>> CCTP
               >
                 {getStepStatus("add-claim") === "complete" ? (
                   <CheckCircle2 className="size-5 md:size-6" />
@@ -391,17 +553,43 @@ export default function AppPage() {
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
                   <h3 className="text-base md:text-lg font-medium text-foreground">Add Claim to Identity</h3>
+<<<<<<< HEAD
+=======
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      getStepStatus("add-claim") === "complete"
+                        ? "bg-green-100 text-green-700"
+                        : getStepStatus("add-claim") === "in-progress"
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-slate-100 text-slate-600"
+                    }`}
+                  >
+                    {getStepStatus("add-claim") === "complete"
+                      ? "Complete"
+                      : getStepStatus("add-claim") === "in-progress"
+                        ? "In Progress"
+                        : "Pending"}
+                  </span>
+>>>>>>> CCTP
                 </div>
                 <p className="text-muted-foreground mb-4 text-sm md:text-base">
                   Add your KYC verification claim to your onchain identity
                 </p>
                 {getStepStatus("add-claim") === "in-progress" && !claimAdded && (
                   <Button
+<<<<<<< HEAD
                     onClick={handleRegisterIdentity}
                     disabled={isRegistering}
                     className={`bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white ${isMobile ? "h-12 px-6" : ""}`}
                   >
                     {isRegistering ? <><Loader2 className="mr-2 size-4 animate-spin" /> Registering...</> : <>Register Identity <ChevronRight className="ml-2 size-4" /></>}
+=======
+                    onClick={handleAddClaim}
+                    className={`bg-gradient-to-tr from-[#3A86FF] to-[#1f6fff] text-white ${isMobile ? "h-12 px-6" : ""}`}
+                  >
+                    Add KYC Claim
+                    <ChevronRight className="ml-2 size-4" />
+>>>>>>> CCTP
                   </Button>
                 )}
               </div>
