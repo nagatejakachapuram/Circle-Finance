@@ -22,10 +22,6 @@
       "@/*": ["./*"]
     }
   },
-<<<<<<< HEAD
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "server/context.js"],
-=======
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
->>>>>>> CCTP
   "exclude": ["node_modules"]
 }
