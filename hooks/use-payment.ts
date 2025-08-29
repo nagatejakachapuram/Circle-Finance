@@ -1,7 +1,44 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import type { PaymentRequest, PaymentResult } from "@/lib/payment-processor"
+
+export interface PaymentRequest {
+  amount: number
+  currency?: string
+  chainId: number
+  recipientAddress: string
+  paymentMethodId?: string
+  returnUrl?: string
+  metadata?: Record<string, any>
+}
+
+export interface TransactionData {
+  to: string
+  data: string
+  value: string
+  gasLimit?: string
+}
+
+export interface PaymentResult {
+  success: boolean
+  error?: string
+  paymentIntent?: {
+    id: string
+    clientSecret?: string
+  }
+  order?: {
+    id: string
+    status: string
+  }
+  estimatedGas?: bigint
+  networkFee?: number
+
+  // Added for wallet signing flow
+  requiresWalletSignature?: boolean
+  transactionData?: TransactionData
+  txHash?: string
+  data?: any
+}
 
 export function usePayment() {
   const [isLoading, setIsLoading] = useState(false)
@@ -22,7 +59,7 @@ export function usePayment() {
 
       if (!data.success) {
         setError(data.error)
-        return null
+        return { success: false, error: data.error }
       }
 
       return {
@@ -35,13 +72,19 @@ export function usePayment() {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to create payment intent"
       setError(errorMessage)
-      return null
+      return { success: false, error: errorMessage }
     } finally {
       setIsLoading(false)
     }
   }, [])
 
-  const processPayment = useCallback(async (paymentIntentId: string, txHash: string): Promise<boolean> => {
+  const processPayment = useCallback(async (params: {
+    paymentIntentId: string
+    chainId: number
+    fromAddress: string
+    toAddress: string
+    amount: number
+  }): Promise<PaymentResult> => {
     setIsLoading(true)
     setError(null)
 
@@ -49,21 +92,27 @@ export function usePayment() {
       const response = await fetch("/api/payments/process", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ paymentIntentId, txHash }),
+        body: JSON.stringify(params),
       })
 
       const data = await response.json()
 
       if (!data.success) {
         setError(data.error)
-        return false
+        return { success: false, error: data.error }
       }
 
-      return true
+      // Example: backend may return tx data for wallet signature
+      return {
+        success: true,
+        requiresWalletSignature: data.requiresWalletSignature,
+        transactionData: data.transactionData,
+        txHash: data.txHash,
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to process payment"
       setError(errorMessage)
-      return false
+      return { success: false, error: errorMessage }
     } finally {
       setIsLoading(false)
     }

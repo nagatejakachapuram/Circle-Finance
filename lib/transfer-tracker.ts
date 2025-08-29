@@ -21,7 +21,9 @@ export class TransferTracker {
   private globalCallbacks: TransferUpdateCallback[] = []
 
   constructor() {
-    this.resumeActiveTransfers()
+    if (typeof window !== "undefined") {
+      this.resumeActiveTransfers()
+    }
   }
 
   private resumeActiveTransfers(): void {
@@ -297,3 +299,5 @@ if (typeof window !== "undefined") {
     transferTracker.cleanup()
   })
 }
+
+

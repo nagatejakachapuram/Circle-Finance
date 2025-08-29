@@ -25,16 +25,15 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: {
+      paymentIntent: {
         id: paymentIntentId,
         amount,
         chainId,
         recipientAddress,
         metadata,
-        status: "requires_payment",
-        created: new Date().toISOString(),
       },
     })
+
   } catch (error) {
     console.error("[v0] Payment intent creation failed:", error)
     return NextResponse.json({ success: false, error: "Failed to create payment intent" }, { status: 500 })

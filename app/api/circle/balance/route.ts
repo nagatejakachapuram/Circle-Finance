@@ -10,12 +10,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Wallet ID required" }, { status: 400 })
     }
 
-    const response = await fetch(`${CIRCLE_CONFIG.apiUrl}/v1/w3s/wallets/${walletId}/balances`, {
-      headers: {
-        Authorization: `Bearer ${CIRCLE_CONFIG.apiKey}`,
-        "Content-Type": "application/json",
-      },
-    })
+    const response = await fetch(
+      `${process.env.CIRCLE_API_URL}/v1/w3s/wallets/${walletId}/balances`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.CIRCLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
 
     if (!response.ok) {
       throw new Error(`Balance check failed: ${response.statusText}`)

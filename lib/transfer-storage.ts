@@ -85,6 +85,7 @@ export class TransferStorage {
   }
 
   getActiveTransfers(): StoredTransfer[] {
+    if (typeof window === "undefined") return [];
     return this.getStoredTransfers().filter(
       (t) => t.status === "pending" || t.status === "burned" || t.status === "attested",
     )

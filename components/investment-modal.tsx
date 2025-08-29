@@ -119,14 +119,14 @@ export function InvestmentModal({
         },
       });
 
-      if (!paymentIntent.success) {
+      if (!paymentIntent?.success || !paymentIntent.paymentIntent?.id) {
         throw new Error(
-          paymentIntent.error || "Failed to create payment intent"
+          paymentIntent?.error || "Failed to create payment intent"
         );
       }
 
       const result = await processPayment({
-        paymentIntentId: paymentIntent.data!.id,
+        paymentIntentId: paymentIntent.paymentIntent.id,
         chainId: Number(selectedChain),
         fromAddress: walletAddress,
         toAddress: recipientAddress,
@@ -464,7 +464,8 @@ export function InvestmentModal({
               disabled={
                 isProcessing ||
                 !walletAddress ||
-                (asset.minimumInvestment && totalCost < asset.minimumInvestment)
+                (asset.minimumInvestment !== undefined &&
+                  totalCost < asset.minimumInvestment)
               }
             >
               {isProcessing ? (

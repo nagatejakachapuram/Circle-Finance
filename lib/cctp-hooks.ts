@@ -1,4 +1,5 @@
 import { type Address, encodeFunctionData, parseUnits, formatUnits } from "viem"
+import type { Hex } from "viem"
 
 export interface HookConfig {
   target: Address
@@ -140,13 +141,13 @@ export class CCTPHooks {
         {
           name: callParams.functionName,
           type: "function",
-          inputs: [], // This would need to be dynamic based on the actual function
+          inputs: [] as const, // This would need to be dynamic based on the actual function
           outputs: [],
           stateMutability: callParams.value ? "payable" : "nonpayable",
         },
       ],
       functionName: callParams.functionName,
-      args: callParams.args,
+      args: callParams.args as any,
     })
 
     return {
@@ -267,8 +268,8 @@ export class CCTPHooks {
    * Combine multiple hooks into a single multicall hook
    */
   static createMulticallHook(hooks: HookConfig[]): HookConfig {
-    const targets = hooks.map((h) => h.target)
-    const calldatas = hooks.map((h) => h.callData)
+    const targets = hooks.map((h) => h.target as Address)
+    const calldatas = hooks.map((h) => h.callData as Hex)
 
     const multicallData = encodeFunctionData({
       abi: [

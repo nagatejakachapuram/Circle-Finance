@@ -43,7 +43,7 @@ class CircleAPI {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-Circle-Client-Key": CIRCLE_CONFIG.clientKey,
+          // "X-Circle-Client-Key": CIRCLE_CONFIG.clientKey,
         },
         body: JSON.stringify(data),
       })
@@ -83,7 +83,7 @@ class CircleAPI {
     try {
       const response = await fetch(`${API_BASE_URL}/events`, {
         headers: {
-          "X-Circle-Client-Key": CIRCLE_CONFIG.clientKey,
+          // "X-Circle-Client-Key": CIRCLE_CONFIG.clientKey,
         },
       })
 

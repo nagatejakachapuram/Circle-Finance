@@ -1,93 +1,124 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
-import { ArrowUpDown, Loader2, Zap, Settings, Clock } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Switch } from "@/components/ui/switch"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import { useWallet } from "@/hooks/use-wallet"
-import { useTransferTracker } from "@/hooks/use-transfer-tracker"
-import { CCTP_V2_NETWORKS, type CCTPV2Network, isFastTransferSupported } from "@/lib/cctp-config"
-import { validateCCTPTransfer, calculateTransferTime } from "@/lib/cctp-utils"
-import { HOOK_PRESETS, type HookConfig, type HookPreset } from "@/lib/cctp-hooks"
-import { GlassCard } from "./glass-card"
+import { useState, useEffect } from "react";
+import { ArrowUpDown, Loader2, Zap, Settings, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { useWallet } from "@/hooks/use-wallet";
+import { useTransferTracker } from "@/hooks/use-transfer-tracker";
+import {
+  CCTP_V2_NETWORKS,
+  type CCTPV2Network,
+  isFastTransferSupported,
+} from "@/lib/cctp-config";
+import { validateCCTPTransfer, calculateTransferTime } from "@/lib/cctp-utils";
+import {
+  HOOK_PRESETS,
+  type HookConfig,
+  type HookPreset,
+} from "@/lib/cctp-hooks";
+import { GlassCard } from "./glass-card";
 
-const networkOptions = Object.entries(CCTP_V2_NETWORKS).map(([key, config]) => ({
-  value: key as CCTPV2Network,
-  label: config.name,
-  chainId: config.chainId,
-}))
+const networkOptions = Object.entries(CCTP_V2_NETWORKS).map(
+  ([key, config]) => ({
+    value: key as CCTPV2Network,
+    label: config.name,
+    chainId: config.chainId,
+  })
+);
 
 export function CCTPTransferForm() {
-  const { address, isConnected, connect, switchNetwork, currentNetwork } = useWallet()
-  const { createTransfer, executeTransfer, isLoading } = useTransferTracker()
+  const { address, isConnected, connect, switchNetwork, currentNetwork } =
+    useWallet();
+  const { createTransfer, executeTransfer, isLoading } = useTransferTracker();
 
-  const [sourceChain, setSourceChain] = useState<CCTPV2Network>("ethereum")
-  const [destinationChain, setDestinationChain] = useState<CCTPV2Network>("base")
-  const [amount, setAmount] = useState("")
-  const [destinationAddress, setDestinationAddress] = useState("")
-  const [estimatedTime, setEstimatedTime] = useState("")
-  const [error, setError] = useState("")
-  const [step, setStep] = useState<"form" | "confirm" | "executing">("form")
+  const [sourceChain, setSourceChain] = useState<CCTPV2Network>("ethereum");
+  const [destinationChain, setDestinationChain] =
+    useState<CCTPV2Network>("base");
+  const [amount, setAmount] = useState("");
+  const [destinationAddress, setDestinationAddress] = useState("");
+  const [estimatedTime, setEstimatedTime] = useState("");
+  const [error, setError] = useState("");
+  const [step, setStep] = useState<"form" | "confirm" | "executing">("form");
 
   // --- 1. ADD NEW STATE TO MANAGE TRANSFER EXECUTION ---
-  const [isExecutingTransfer, setIsExecutingTransfer] = useState(false)
+  const [isExecutingTransfer, setIsExecutingTransfer] = useState(false);
 
-  const [useFastTransfer, setUseFastTransfer] = useState(true)
-  const [fastTransferAvailable, setFastTransferAvailable] = useState(false)
+  const [useFastTransfer, setUseFastTransfer] = useState(true);
+  const [fastTransferAvailable, setFastTransferAvailable] = useState(false);
   const [fastTransferStatus, setFastTransferStatus] = useState<{
-    available: boolean
-    maxAmount: string
-    estimatedTime: number
-    reason?: string
-  } | null>(null)
-  const [useHooks, setUseHooks] = useState(false)
-  const [selectedHookPreset, setSelectedHookPreset] = useState<HookPreset | "">("")
-  const [customHook, setCustomHook] = useState<HookConfig | null>(null)
-  const [showAdvanced, setShowAdvanced] = useState(false)
+    available: boolean;
+    maxAmount: string;
+    estimatedTime: number;
+    reason?: string;
+  } | null>(null);
+  const [useHooks, setUseHooks] = useState(false);
+  const [selectedHookPreset, setSelectedHookPreset] = useState<HookPreset | "">(
+    ""
+  );
+  const [customHook, setCustomHook] = useState<HookConfig | null>(null);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   useEffect(() => {
     if (amount && sourceChain && destinationChain) {
       const isSupported = isFastTransferSupported(
         CCTP_V2_NETWORKS[sourceChain].chainId,
         CCTP_V2_NETWORKS[destinationChain].chainId,
-        amount,
-      )
-      setFastTransferAvailable(isSupported)
+        amount
+      );
+      setFastTransferAvailable(isSupported);
       if (useFastTransfer && isSupported) {
-        setEstimatedTime("30 seconds")
+        setEstimatedTime("30 seconds");
         setFastTransferStatus({
           available: true,
           maxAmount: "1000000",
           estimatedTime: 30,
-        })
+        });
       } else {
-        const time = calculateTransferTime(sourceChain, destinationChain)
-        setEstimatedTime(time)
+        const time = calculateTransferTime(sourceChain, destinationChain);
+        setEstimatedTime(time);
         setFastTransferStatus({
           available: false,
           maxAmount: "1000000",
           estimatedTime: 900,
-          reason: isSupported ? "Fast Transfer disabled" : "Amount exceeds Fast Transfer limit",
-        })
+          reason: isSupported
+            ? "Fast Transfer disabled"
+            : "Amount exceeds Fast Transfer limit",
+        });
       }
     }
-  }, [amount, sourceChain, destinationChain, useFastTransfer])
+  }, [amount, sourceChain, destinationChain, useFastTransfer]);
 
   // --- 2. CREATE A useEffect TO REACT TO NETWORK CHANGES ---
   useEffect(() => {
     // This effect runs only when we intend to transfer AND the conditions are right.
     if (!isExecutingTransfer || !address || currentNetwork !== sourceChain) {
-      return
+      return;
     }
 
     const performTransfer = async () => {
@@ -102,33 +133,40 @@ export function CCTPTransferForm() {
                   gasLimit: customHook.gasLimit,
                 }
               : undefined,
-        }
+        };
 
-        const transferId = await createTransfer(sourceChain, destinationChain, amount, address, destinationAddress)
+        const transferId = await createTransfer(
+          sourceChain,
+          destinationChain,
+          amount,
+          address,
+          destinationAddress
+        );
 
-        await executeTransfer(transferId, address)
+        await executeTransfer(transferId, address);
 
         // Reset form on success
-        setStep("form")
-        setAmount("")
-        setDestinationAddress("")
-        setEstimatedTime("")
-        setUseHooks(false)
-        setSelectedHookPreset("")
-        setCustomHook(null)
+        setStep("form");
+        setAmount("");
+        setDestinationAddress("");
+        setEstimatedTime("");
+        setUseHooks(false);
+        setSelectedHookPreset("");
+        setCustomHook(null);
       } catch (err) {
-        console.error("[v0] Transfer execution failed:", err)
-        const errorMessage = err instanceof Error ? err.message : "Transfer failed"
+        console.error("[v0] Transfer execution failed:", err);
+        const errorMessage =
+          err instanceof Error ? err.message : "Transfer failed";
         // ... (your extensive error message handling) ...
-        setError(errorMessage)
-        setStep("confirm")
+        setError(errorMessage);
+        setStep("confirm");
       } finally {
         // IMPORTANT: Reset the execution state regardless of success or failure
-        setIsExecutingTransfer(false)
+        setIsExecutingTransfer(false);
       }
-    }
+    };
 
-    performTransfer()
+    performTransfer();
   }, [
     isExecutingTransfer,
     currentNetwork,
@@ -143,82 +181,91 @@ export function CCTPTransferForm() {
     useFastTransfer,
     useHooks,
     customHook,
-  ])
+  ]);
 
   const handleSwapChains = () => {
-    const temp = sourceChain
-    setSourceChain(destinationChain)
-    setDestinationChain(temp)
-  }
+    const temp = sourceChain;
+    setSourceChain(destinationChain);
+    setDestinationChain(temp);
+  };
 
   const handleAmountChange = (value: string) => {
-    setAmount(value)
-    setError("")
-  }
+    setAmount(value);
+    setError("");
+  };
 
   const handleHookPresetChange = (preset: HookPreset | "") => {
-    setSelectedHookPreset(preset)
+    setSelectedHookPreset(preset);
     if (preset && address) {
       try {
-        const hookConfig = HOOK_PRESETS[preset](CCTP_V2_NETWORKS[destinationChain].chainId, amount || "1", address)
-        setCustomHook(hookConfig)
+        const hookConfig = (HOOK_PRESETS as any)[preset](
+          CCTP_V2_NETWORKS[destinationChain].chainId,
+          amount || "1",
+          address
+        );
+
+        setCustomHook(hookConfig);
       } catch (error) {
-        console.error("Failed to create hook preset:", error)
-        setCustomHook(null)
+        console.error("Failed to create hook preset:", error);
+        setCustomHook(null);
       }
     } else {
-      setCustomHook(null)
+      setCustomHook(null);
     }
-  }
+  };
 
   const handleValidateAndProceed = () => {
     if (!isConnected) {
-      connect()
-      return
+      connect();
+      return;
     }
 
-    const validation = validateCCTPTransfer(sourceChain, destinationChain, amount)
+    const validation = validateCCTPTransfer(
+      sourceChain,
+      destinationChain,
+      amount
+    );
     if (!validation.isValid) {
-      setError(validation.error || "Invalid transfer")
-      return
+      setError(validation.error || "Invalid transfer");
+      return;
     }
 
     if (!destinationAddress) {
-      setError("Please enter a destination address")
-      return
+      setError("Please enter a destination address");
+      return;
     }
 
-    setStep("confirm")
-  }
+    setStep("confirm");
+  };
 
   // --- 3. SIMPLIFY THE CLICK HANDLER ---
   const handleExecuteTransfer = async (e?: React.MouseEvent) => {
     if (e) {
-      e.preventDefault()
+      e.preventDefault();
     }
 
-    if (!address) return
+    if (!address) return;
 
     // Set the intent to transfer, which will trigger the useEffect
-    setIsExecutingTransfer(true)
-    setError("")
-    setStep("executing")
+    setIsExecutingTransfer(true);
+    setError("");
+    setStep("executing");
 
     // If the network is wrong, trigger the switch.
     // The useEffect will wait for the `currentNetwork` state to update.
     if (currentNetwork !== sourceChain) {
-      console.log("[v0] Switching to source network:", sourceChain)
-      await switchNetwork(sourceChain)
+      console.log("[v0] Switching to source network:", sourceChain);
+      await switchNetwork(sourceChain);
     }
-  }
+  };
 
   const handleBack = (e?: React.MouseEvent) => {
     if (e) {
-      e.preventDefault()
+      e.preventDefault();
     }
-    setStep("form")
-    setError("")
-  }
+    setStep("form");
+    setError("");
+  };
 
   // ... All the JSX (return statement) remains exactly the same ...
   // No changes are needed for the rendered output.
@@ -229,13 +276,18 @@ export function CCTPTransferForm() {
           <CardTitle className="flex items-center gap-2">
             Confirm Transfer
             {useFastTransfer && fastTransferAvailable && (
-              <Badge variant="secondary" className="bg-green-100 text-green-800">
+              <Badge
+                variant="secondary"
+                className="bg-green-100 text-green-800"
+              >
                 <Zap className="w-3 h-3 mr-1" />
                 Fast Transfer
               </Badge>
             )}
           </CardTitle>
-          <CardDescription>Review your cross-chain USDC transfer details</CardDescription>
+          <CardDescription>
+            Review your cross-chain USDC transfer details
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-3">
@@ -245,11 +297,15 @@ export function CCTPTransferForm() {
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">From:</span>
-              <span className="font-medium">{CCTP_V2_NETWORKS[sourceChain].name}</span>
+              <span className="font-medium">
+                {CCTP_V2_NETWORKS[sourceChain].name}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">To:</span>
-              <span className="font-medium">{CCTP_V2_NETWORKS[destinationChain].name}</span>
+              <span className="font-medium">
+                {CCTP_V2_NETWORKS[destinationChain].name}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Destination:</span>
@@ -268,7 +324,10 @@ export function CCTPTransferForm() {
             {useFastTransfer && fastTransferAvailable && (
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Transfer Type:</span>
-                <Badge variant="secondary" className="bg-green-100 text-green-800">
+                <Badge
+                  variant="secondary"
+                  className="bg-green-100 text-green-800"
+                >
                   <Zap className="w-3 h-3 mr-1" />
                   Fast Transfer
                 </Badge>
@@ -277,7 +336,9 @@ export function CCTPTransferForm() {
             {useHooks && customHook && (
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Hook:</span>
-                <span className="font-medium text-sm">{selectedHookPreset || "Custom Hook"}</span>
+                <span className="font-medium text-sm">
+                  {selectedHookPreset || "Custom Hook"}
+                </span>
               </div>
             )}
           </div>
@@ -289,7 +350,12 @@ export function CCTPTransferForm() {
           )}
 
           <div className="flex gap-3">
-            <Button variant="outline" onClick={handleBack} className="flex-1 bg-transparent" type="button">
+            <Button
+              variant="outline"
+              onClick={handleBack}
+              className="flex-1 bg-transparent"
+              type="button"
+            >
               Back
             </Button>
             <Button
@@ -310,7 +376,7 @@ export function CCTPTransferForm() {
           </div>
         </CardContent>
       </GlassCard>
-    )
+    );
   }
 
   if (step === "executing") {
@@ -330,7 +396,7 @@ export function CCTPTransferForm() {
           </div>
         </CardContent>
       </GlassCard>
-    )
+    );
   }
 
   return (
@@ -342,14 +408,19 @@ export function CCTPTransferForm() {
             V2
           </Badge>
         </CardTitle>
-        <CardDescription>Transfer USDC between supported networks using Circle's CCTP V2</CardDescription>
+        <CardDescription>
+          Transfer USDC between supported networks using Circle's CCTP V2
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>From Network</Label>
-              <Select value={sourceChain} onValueChange={(value: CCTPV2Network) => setSourceChain(value)}>
+              <Select
+                value={sourceChain}
+                onValueChange={(value: CCTPV2Network) => setSourceChain(value)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -365,7 +436,12 @@ export function CCTPTransferForm() {
 
             <div className="space-y-2">
               <Label>To Network</Label>
-              <Select value={destinationChain} onValueChange={(value: CCTPV2Network) => setDestinationChain(value)}>
+              <Select
+                value={destinationChain}
+                onValueChange={(value: CCTPV2Network) =>
+                  setDestinationChain(value)
+                }
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -381,7 +457,12 @@ export function CCTPTransferForm() {
           </div>
 
           <div className="flex justify-center">
-            <Button variant="outline" size="sm" onClick={handleSwapChains} className="rounded-full p-2 bg-transparent">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSwapChains}
+              className="rounded-full p-2 bg-transparent"
+            >
               <ArrowUpDown className="h-4 w-4" />
             </Button>
           </div>
@@ -405,7 +486,10 @@ export function CCTPTransferForm() {
                 Estimated completion: {estimatedTime}
               </span>
               {useFastTransfer && fastTransferAvailable && (
-                <Badge variant="secondary" className="bg-green-100 text-green-800">
+                <Badge
+                  variant="secondary"
+                  className="bg-green-100 text-green-800"
+                >
                   <Zap className="w-3 h-3 mr-1" />
                   Fast
                 </Badge>
@@ -435,7 +519,9 @@ export function CCTPTransferForm() {
 
             {!fastTransferAvailable && fastTransferStatus?.reason && (
               <Alert>
-                <AlertDescription className="text-xs">{fastTransferStatus.reason}</AlertDescription>
+                <AlertDescription className="text-xs">
+                  {fastTransferStatus.reason}
+                </AlertDescription>
               </Alert>
             )}
           </div>
@@ -463,7 +549,11 @@ export function CCTPTransferForm() {
 
         <Collapsible open={showAdvanced} onOpenChange={setShowAdvanced}>
           <CollapsibleTrigger asChild>
-            <Button variant="ghost" size="sm" className="w-full justify-between">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full justify-between"
+            >
               <span className="flex items-center gap-2">
                 <Settings className="w-4 h-4" />
                 Advanced Options
@@ -488,7 +578,10 @@ export function CCTPTransferForm() {
                 <div className="space-y-3 pl-4 border-l-2 border-muted">
                   <div className="space-y-2">
                     <Label>Hook Preset</Label>
-                    <Select value={selectedHookPreset} onValueChange={handleHookPresetChange}>
+                    <Select
+                      value={selectedHookPreset}
+                      onValueChange={handleHookPresetChange}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select a hook preset" />
                       </SelectTrigger>
@@ -496,8 +589,12 @@ export function CCTPTransferForm() {
                         <SelectItem value="none">None</SelectItem>
                         <SelectItem value="swapToETH">Swap to ETH</SelectItem>
                         <SelectItem value="swapToWBTC">Swap to WBTC</SelectItem>
-                        <SelectItem value="stakeInAave">Stake in Aave</SelectItem>
-                        <SelectItem value="stakeInCompound">Stake in Compound</SelectItem>
+                        <SelectItem value="stakeInAave">
+                          Stake in Aave
+                        </SelectItem>
+                        <SelectItem value="stakeInCompound">
+                          Stake in Compound
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -508,7 +605,8 @@ export function CCTPTransferForm() {
                         <strong>Hook:</strong> {customHook.description}
                       </p>
                       <p>
-                        <strong>Gas Limit:</strong> {customHook.gasLimit.toLocaleString()}
+                        <strong>Gas Limit:</strong>{" "}
+                        {customHook.gasLimit.toLocaleString()}
                       </p>
                     </div>
                   )}
@@ -542,5 +640,5 @@ export function CCTPTransferForm() {
         </div>
       </CardContent>
     </GlassCard>
-  )
+  );
 }

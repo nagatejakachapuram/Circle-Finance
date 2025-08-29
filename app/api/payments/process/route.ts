@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Find the network configuration
-    const network = CCTP_V2_NETWORKS.find((n) => n.chainId === chainId)
+    const network = Object.values(CCTP_V2_NETWORKS).find((n) => n.chainId === chainId)
     if (!network) {
       return NextResponse.json({ success: false, error: "Unsupported network" }, { status: 400 })
     }

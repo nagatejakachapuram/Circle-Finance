@@ -194,57 +194,79 @@ async function handleMintTransfer(transferId: string, userAddress: string) {
 
 async function handleGetStatus(transferId: string) {
   if (!transferId) {
-    return NextResponse.json({ success: false, error: "Missing required field: transferId" }, { status: 400 })
+    return NextResponse.json(
+      { success: false, error: "Missing required field: transferId" },
+      { status: 400 }
+    )
   }
 
   try {
     const transfer = transferTracker.getTransfer(transferId)
 
     if (!transfer) {
-      return NextResponse.json({ success: false, error: "Transfer not found" }, { status: 404 })
+      return NextResponse.json(
+        { success: false, error: "Transfer not found" },
+        { status: 404 }
+      )
     }
 
-    // Get detailed status if we have a message hash
+    if (!transfer.burnTxHash || !transfer.messageHash) {
+      return NextResponse.json(
+        { success: false, error: "Transfer missing required data" },
+        { status: 400 }
+      )
+    }
+
     let detailedStatus = null
-    if (transfer.messageHash && transfer.status !== "minted" && transfer.status !== "failed") {
+    if (
+      transfer.messageHash &&
+      transfer.status !== "minted" &&
+      transfer.status !== "failed"
+    ) {
       try {
         detailedStatus = await cctpService.getTransferStatus(
-          transfer.messageHash,
+          transfer.burnTxHash!,
+          transfer.messageHash!,
           transfer.sourceChain,
           transfer.destinationChain,
           transfer.nonce || BigInt(0),
+          transfer.sourceDomain,
+          false
         )
       } catch (error) {
         console.error("[v0] Failed to get detailed status:", error)
       }
     }
 
+    // ---- ✅ Merge transfer + detailedStatus ----
+    const mergedStatus = {
+      ...transfer,
+      ...detailedStatus, // overwrite with live data if available
+      attestation: detailedStatus?.attestation?.attestation,
+      canMint:
+        (transfer.status === "attested" && detailedStatus?.canMint === true) ||
+        false,
+    }
+
     return NextResponse.json({
       success: true,
-      transfer: {
-        id: transfer.id,
-        sourceChain: transfer.sourceChain,
-        destinationChain: transfer.destinationChain,
-        amount: transfer.amount,
-        status: transfer.status,
-        burnTxHash: transfer.burnTxHash,
-        mintTxHash: transfer.mintTxHash,
-        messageHash: transfer.messageHash,
-        createdAt: transfer.createdAt,
-        updatedAt: transfer.updatedAt,
-        lastError: transfer.lastError,
-      },
-      detailedStatus,
-      canMint: detailedStatus?.canMint || false,
+      transfer: mergedStatus,
     })
   } catch (error) {
     console.error("[v0] Failed to get transfer status:", error)
     return NextResponse.json(
-      { success: false, error: error instanceof Error ? error.message : "Failed to get transfer status" },
-      { status: 500 },
+      {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to get transfer status",
+      },
+      { status: 500 }
     )
   }
 }
+
 
 async function handleEstimate(
   sourceChain: CCTPNetwork,

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { attestationService, type AttestationResponse, type MessageStatus } from "@/lib/attestation-service"
 import type { CCTPNetwork } from "@/lib/cctp-config"
+import { CCTP_V2_NETWORKS } from "@/lib/cctp-config"
 
 interface UseAttestationOptions {
   autoStart?: boolean
@@ -11,7 +12,10 @@ interface UseAttestationOptions {
   onProgress?: (attempt: number, maxAttempts: number) => void
 }
 
-export function useAttestation(messageHash?: string, options: UseAttestationOptions = {}) {
+export function useAttestation(messageHash?: string,
+  sourceChain?: CCTPNetwork,   // ✅ added
+  nonce?: bigint,              // ✅ added
+  options: UseAttestationOptions = {}) {
   const [attestation, setAttestation] = useState<AttestationResponse | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -19,17 +23,23 @@ export function useAttestation(messageHash?: string, options: UseAttestationOpti
 
   const fetchAttestation = useCallback(
     async (hash: string) => {
-      if (!hash) return
+      if (!hash || !sourceChain || nonce === undefined) return
 
       setIsLoading(true)
       setError(null)
       setProgress(null)
 
       try {
-        const result = await attestationService.waitForAttestation(hash, (attempt, maxAttempts) => {
-          setProgress({ current: attempt, total: maxAttempts })
-          options.onProgress?.(attempt, maxAttempts)
-        })
+        const result = await attestationService.waitForAttestation(
+          hash,
+          CCTP_V2_NETWORKS[sourceChain].domain,
+          nonce?.toString(),
+          (attempt: number, maxAttempts: number) => {
+            setProgress({ current: attempt, total: maxAttempts })
+            options.onProgress?.(attempt, maxAttempts)
+          }
+        )
+
 
         setAttestation(result)
 
@@ -48,14 +58,20 @@ export function useAttestation(messageHash?: string, options: UseAttestationOpti
         setProgress(null)
       }
     },
-    [options],
+    [options, sourceChain, nonce],
   )
 
   const checkAttestation = useCallback(async (hash: string) => {
     if (!hash) return null
 
     try {
-      const result = await attestationService.getAttestation(hash)
+      if (!sourceChain) return null;
+      const result = await attestationService.getAttestation(
+        CCTP_V2_NETWORKS[sourceChain].domain,
+        hash,
+        nonce?.toString()
+      )
+
       setAttestation(result)
       return result
     } catch (err) {
@@ -91,6 +107,7 @@ export function useAttestation(messageHash?: string, options: UseAttestationOpti
 
 export function useMessageStatus(
   messageHash?: string,
+  burnTxHash?: string,
   sourceChain?: CCTPNetwork,
   destinationChain?: CCTPNetwork,
   nonce?: bigint,
@@ -106,7 +123,15 @@ export function useMessageStatus(
     setError(null)
 
     try {
-      const result = await attestationService.getMessageStatus(messageHash, sourceChain, destinationChain, nonce)
+      const result = await attestationService.getMessageStatus(
+        messageHash,
+        burnTxHash ?? "",
+        sourceChain,
+        destinationChain,
+        nonce!,
+        CCTP_V2_NETWORKS[sourceChain].domain
+      )
+
       setStatus(result)
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to fetch message status"

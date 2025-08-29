@@ -2,6 +2,7 @@ export const CIRCLE_CONFIG = {
   // API URL for client-side requests to our backend
   apiUrl: "/api/circle",
 
+
   // Circle API endpoints
   endpoints: {
     sendUsdc: "/send-usdc",
